@@ -1,0 +1,15 @@
+#!/bin/sh
+
+curl -i -d \
+'{
+"users": [
+{
+"name": "sylviaUser1",
+"password": "sylvia",
+"database": "sylvia_db1"
+}
+]
+}' \
+-H 'X-Auth-Token: ea84f4e9-9398-4957-a382-4a2c462765b7' \
+-H 'Content-Type: application/json' \
+'https://lon.databases.api.rackspacecloud.com/v1.0/10016401/instances/42d17d9d-495d-419e-b33b-28ca3fb383be/users' >> /home/script/user_create_output

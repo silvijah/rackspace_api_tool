@@ -1,0 +1,5 @@
+{
+    "resize": {
+        "flavorRef": "https://lon.databases.api.rackspacecloud.com/v1.0/10016401/flavors/2"
+    }
+}

@@ -1,0 +1,30 @@
+{
+"instance": {
+"databases": [
+{
+"character_set": "utf8",
+"collate": "utf8_general_ci",
+"name": "sylvia_db"
+},
+{
+"name": "sylvia_db1"
+}
+],
+"flavorRef": "https://lon.databases.api.rackspacecloud.com/v1.0/10016401/flavors/1",
+"name": "sylvia_instance",
+"users": [
+{
+"databases": [
+{
+"name": "sylvia_db"
+}
+],
+"name": "sylvia",
+"password": "sylvia"
+}
+],
+"volume": {
+"size": 2
+}
+}
+}
