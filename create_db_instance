@@ -1,0 +1,31 @@
+{
+"instance": {
+"databases": [
+{
+"character_set": "utf8",
+"collate": "utf8_general_ci",
+
+
+"name": "your_instance_name_here"
+}
+],
+"flavorRef": "https://{location_of_your_datacenter}.databases.api.rackspacecloud.com/v1.0/your_account_number_here/flavors/1",
+
+"name": "your-instane-name-here",
+"users": [
+{
+"databases": [
+{
+"name": "name-of-your-db"
+}
+],
+"name": "username",
+"password": "password"
+}
+],
+"volume":
+{
+"size": 2
+}
+}
+}
