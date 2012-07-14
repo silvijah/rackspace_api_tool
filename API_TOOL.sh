@@ -10,7 +10,6 @@ read -p "VALID API TOKEN " APITOKEN;
 while true; do 
 	echo -e -n "\n\tCHOOSE ONE OF THE FOLLOWING OPTIONS:\n\n"
 	echo "1 DATABASE INSTANCES"
-#	echo "2 MAIN MENU"
 	echo "2 EXIT"
 
 	read CONFIRM
@@ -23,14 +22,6 @@ while true; do
                                 echo "CHOOSE ONE OF THE AVAILABLE OPTIONS"
                         fi
                         ;;
-#		2|MAINMENU)
-#                        if [ "~/main_menu.sh" ]; then
-#                               	source ~/main_menu.sh
-#                                main_menu
-#                        else
-#                                echo "CHOOSE ONE OF THE AVAILABLE OPTIONS"
-#                        fi
-#                       ;;	
 		2|EXIT)
 			echo "THANK YOU FOR USING THE API CLIENT"
 			exit
