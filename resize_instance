@@ -1,5 +1,5 @@
 {
     "resize": {
-        "flavorRef": "https://lon.databases.api.rackspacecloud.com/v1.0/10016401/flavors/2"
+        "flavorRef": "https://{location_of_your_datacenter}.databases.api.rackspacecloud.com/v1.0/{your_account_number}/flavors/2"
     }
 }

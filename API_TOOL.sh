@@ -1,6 +1,6 @@
 #! /bin/bash
 
-authenticate= read -p "USERNAME " USERNAME; read -p "ACCOUNT " ACCOUNT; read -p "API KEY " APIKEY;read -p "DATACENTER LOCATION " LOCATION;
+authenticate= read -p "USERNAME " USERNAME; read -p "RACKSPACE ACCOUNT NUMBER/DDI " ACCOUNT; read -p "API KEY (PROVIDED BY RACKSPACE WHEN THE ACCOUNT IS CREATED) " APIKEY;read -p "DATACENTER LOCATION " LOCATION;
 
 auth_response="$(curl -i -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Key: $APIKEY"  https://$LOCATION.identity.api.rackspacecloud.com/v1.0 | egrep -e '(^HTTP/1.1|^X-Auth-Token)')"
 
