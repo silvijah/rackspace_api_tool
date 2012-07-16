@@ -1,0 +1,35 @@
+This code is still in BETA version. But it should still do the task.
+
+I will be improving the look and description of the available options so it would be easier to read.
+
+USERNAME your_account_username
+ACCOUNT your_account_number
+API KEY API_Key_Provided_by_rackspace_when_you_join
+DATACENTER LOCATION it_can_be_either_lon_dfw_or_ord 
+
+(whichever location your account is based. All of the UK Cloud customers are located in LON DC)
+
+The Menu is looking something like this:
+
+CHOOSE ONE OF THE FOLLOWING OPTIONS:
+1 MAIN MENU
+2 DATABASES- 
+3 EXIT
+
+2
+ PLEASE CHOOSE ONE OF THE FOLLOWING DATABASE INSTANCE OPTIONS: 
+
+  LIST AVAILABLE FLAVORS - 1
+	LIST AVAILABLE INSTANCES - 2
+	GET THE DETAILED INFORMATION ABOUT A SPECIFIC INSTANCE - 3
+	DELETE A SPECIFIC DATABASE INSTANCE - 4
+	LIST PRESENTLY ACTIVE DATABASES - 5
+	LOGIN TO THE INSTANCE - 6
+	CREATE A NEW DATABASE - 7
+	ENABLE ROOT USER - 8
+	WHICH INSTANCE HAS ROOT USER ENABLED - 9
+	RESTART DATABASE INSTANCE - 10
+	RESIZE THE DATABASE INSTANCE - 11
+	RESIZE INSTANCE VOLUME - 12
+	MAIN MENU - 13
+	EXIT - 14
