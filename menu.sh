@@ -7,7 +7,7 @@ while true; do
 	echo -e -n "\n\nCHOOSE ONE OF THE FOLLOWING OPTIONS:"
 	echo -e -n "\n1 MAIN MENU"
 	echo -e -n "\n2 DATABASES"
-	echo -e -\ "\n3 EXIT\n"
+	echo -e -n "\n3 EXIT\n"
 
 	read CONFIRM
 	case $CONFIRM in
