@@ -21,8 +21,8 @@ while true; do
 	read CONFIRM
 	case $CONFIRM in
 		1|INSTANCES)
-			if [ "~/rackspace_api_tool/databases.sh" ]; then
-				source ~/rackspace_api_tool/databases.sh
+			if [ "./databases.sh" ]; then
+				source ./databases.sh
 				instances
 			else
                                 echo "CHOOSE ONE OF THE AVAILABLE OPTIONS"

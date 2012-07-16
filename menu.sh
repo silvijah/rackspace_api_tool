@@ -13,8 +13,8 @@ while true; do
 	case $CONFIRM in
 		1|MAINMENU) 
 			echo " PLEASE AUTHORISE: "
-			if [ "~/rackspace_api_tool/main_menu.sh" ]; then
-				source ~/rackspace_api_tool/main_menu.sh
+			if [ "./main_menu.sh" ]; then
+				source ./main_menu.sh
 				main_menu
 			else
 				echo "CHOOSE ONE OF THE AVAILABLE OPTIONS"
@@ -22,8 +22,8 @@ while true; do
 			;;
 		2|DATABASES)
 			echo " PLEASE CHOOSE ONE OF THE FOLLOWING DATABASE INSTANCE OPTIONS: "
-			if [ "~/rackspace_api_tool/databases.sh" ]; then
-				source ~/rackspace_api_tool/databases.sh
+			if [ "./databases.sh" ]; then
+				source ./databases.sh
 				instances
 			else
                                 echo "CHOOSE ONE OF THE AVAILABLE OPTIONS"
