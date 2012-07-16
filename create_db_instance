@@ -4,23 +4,21 @@
 {
 "character_set": "utf8",
 "collate": "utf8_general_ci",
-
-
-"name": "your_instance_name_here"
+"name": "your_database1_name"
 }
 ],
-"flavorRef": "https://{location_of_your_datacenter}.databases.api.rackspacecloud.com/v1.0/your_account_number_here/flavors/1",
+"flavorRef": "https://{location_of_your_dc}.databases.api.rackspacecloud.com/v1.0/{your_account_id}/flavors/3",
 
-"name": "your-instane-name-here",
+"name": "your_instance_name",
 "users": [
 {
 "databases": [
 {
-"name": "name-of-your-db"
+"name": "your_database1_name"
 }
 ],
-"name": "username",
-"password": "password"
+"name": "your_username",
+"password": "your_password"
 }
 ],
 "volume":

@@ -3,7 +3,7 @@
 function main_menu()
 {
 
-echo -e -n "\n\nMAIN MENU\n\n : "
+echo -e -n "\n\nMAIN MENU : \n\n"
 
 while true; do
         echo "1 AUTHENTICATE"
@@ -23,8 +23,8 @@ while true; do
                         ;;
                 2|INSTANCES)
                         echo " PLEASE CHOOSE ONE OF THE FOLLOWING DATABASE INSTANCE OPTIONS: "
-                        if [ "~/rackspace_api_tool/instances.sh" ]; then
-                                source ~/rackspace_api_tool/instances.sh
+                        if [ "~/rackspace_api_tool/databases.sh" ]; then
+                                source ~/rackspace_api_tool/databases.sh
                                 instances
                         else
                                 echo "CHOOSE ONE OF THE AVAILABLE OPTIONS"

@@ -7,7 +7,7 @@ while true; do
 	echo -e -n "\n\nCHOOSE ONE OF THE FOLLOWING OPTIONS:"
 	echo -e -n "\n1 MAIN MENU"
 	echo -e -n "\n2 DATABASES"
-	echo -e -\ "\n3 EXIT\n"
+	echo -e -n "\n3 EXIT\n"
 
 	read CONFIRM
 	case $CONFIRM in
@@ -22,8 +22,8 @@ while true; do
 			;;
 		2|DATABASES)
 			echo " PLEASE CHOOSE ONE OF THE FOLLOWING DATABASE INSTANCE OPTIONS: "
-			if [ "~/rackspace_api_tool/instances.sh" ]; then
-				source ~/rackspace_api_tool/instances.sh
+			if [ "~/rackspace_api_tool/databases.sh" ]; then
+				source ~/rackspace_api_tool/databases.sh
 				instances
 			else
                                 echo "CHOOSE ONE OF THE AVAILABLE OPTIONS"
