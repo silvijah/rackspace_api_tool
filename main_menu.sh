@@ -6,22 +6,22 @@ function main_menu()
 echo -e -n "\n\nMAIN MENU : \n\n"
 
 while true; do
-        echo "1 AUTHENTICATE"
-        echo "2 DATABASE INSTANCES"
-        echo "3 EXIT"
+#        echo "1 AUTHENTICATE"
+        echo "1 DATABASE INSTANCES"
+        echo "2 EXIT"
 
         read CONFIRM
         case $CONFIRM in
-                1|PLEASEAUTHORISE)
-                        echo " PLEASE AUTHORISE: "
-                       if [ "./authentication.sh" ]; then
-                                source ./authentication.sh
-                                authenticate
-                        else
-                                echo "CHOOSE ONE OF THE AVAILABLE OPTIONS"
-                        fi
-                        ;;
-                2|INSTANCES)
+#                1|PLEASEAUTHORISE)
+#                        echo " PLEASE AUTHORISE: "
+#                       if [ "./authentication.sh" ]; then
+#                                source ./authentication.sh
+#                                authenticate
+#                        else
+#                                echo "CHOOSE ONE OF THE AVAILABLE OPTIONS"
+#                        fi
+#                        ;;
+                1|INSTANCES)
                         echo " PLEASE CHOOSE ONE OF THE FOLLOWING DATABASE INSTANCE OPTIONS: "
                         if [ "./databases.sh" ]; then
                                 source ./databases.sh
@@ -30,7 +30,7 @@ while true; do
                                 echo "CHOOSE ONE OF THE AVAILABLE OPTIONS"
                         fi
                         ;;
-                3|EXIT)
+                2|EXIT)
                         echo "THANK YOU FOR USING THE API CLIENT"
                         exit
                         ;;
