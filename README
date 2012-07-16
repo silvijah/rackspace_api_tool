@@ -4,11 +4,6 @@ You will be required to have "vi" installed.
 
 Once downloaded, run ./API_TOOL.sh
 
-The location of the file should be in your home directory:
-
-~/rackspace_api_tool
-
-
 I will be improving the look and description of the available options so it would be easier to read.
 
 USERNAME your_account_username
