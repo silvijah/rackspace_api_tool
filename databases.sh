@@ -2,9 +2,8 @@
 
 function instances()
 {
-#read -p "VALID API TOKEN " APITOKEN
 
-echo -e -n 	"\n\t1 LIST AVAILABLE FLAVORS "
+echo -e -n 	"\n\n\t1 LIST AVAILABLE FLAVORS "
 echo -e -n 	"\n\t2 CREATE A NEW INSTANCE (THIS CREATES A BRAND NEW DATABASE AND A USER FOR THE NEW INSTANCE) "
 echo -e -n 	"\n\t3 LIST ALL CREATED DATABASE INSTANCES "
 echo -e -n 	"\n\t4 LIST DATABASE INSTANCE STATUS AND DETAILS "
@@ -29,20 +28,20 @@ do
 		case $CONFIRM in
 	1|LISTAVAILABLEFLAVORS)
                         curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.servers.api.rackspacecloud.com/v1.0/$ACCOUNT/flavors |tr "," "\n";
-			source ~/rackspace_api_tool/menu.sh
-			main_menu
+			source ~/rackspace_api_tool/databases.sh
+			instances
 			;;
         2|CreateANewDB)
                                 cd ~/rackspace_api_tool;
 				vi ~/rackspace_api_tool/create_db_instance;
                                 curl -s -v -d @create_db_instance -XPOST -H "Content-type: application/json" -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances |tr "," "\n" |egrep "created|status|id|hostname|updated"
-                                source ~/rackspace_api_tool/menu.sh
-                                main_menu
+                                source ~/rackspace_api_tool/databases.sh
+                                instances
                         ;;
         3|LISTAVAILABLEINSTANCES)
                         curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances |tr "," "\n" |egrep  "id|name|status|size";
-			source ~/rackspace_api_tool/menu.sh
-			main_menu
+			source ~/rackspace_api_tool/databases.sh
+			instances
 			;;
 	
 	4|ListInstancesInDetail)
@@ -50,38 +49,38 @@ do
 			echo -e -n "\nNOW CHOOSE ONE OF THE AVAILABLE INSTANCE IDs\n";
 			read -p "INSTANCE ID " INSTANCEID;
                         curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances/$INSTANCEID |tr "," "\n" |egrep "hostname|id|name|status|size";
-			source ~/rackspace_api_tool/menu.sh
-			main_menu
+			source ~/rackspace_api_tool/databases.sh
+			instances
 			;;
         5|DeleteDatabaseInstance)
                         curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances |tr "," "\n" |grep "id";
                         echo -e -n "\nNOW CHOOSE ONE OF THE AVAILABLE INSTANCE IDs\n";
                         read -p "INSTANCE ID " INSTANCEID;
 			curl -XDELETE -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances/$INSTANCEID;
-                        source ~/rackspace_api_tool/menu.sh
-                        main_menu
+                        source ~/rackspace_api_tool/databases.sh
+                        instances
                         ;;
 	6|EnableRootUser)
 			curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances |tr "," "\n" |grep  "id";
 			read -p "INSTANCE ID " INSTANCEID;
 			curl -s -XPOST -H "Content-type: application/json" -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances/$INSTANCEID/root |python -mjson.tool;
-			source ~/rackspace_api_tool/menu.sh
-			main_menu
+			source ~/rackspace_api_tool/databases.sh
+			instances
 			;;
 	7|CheckStatusOfRootUser)
                         curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances |tr "," "\n" |grep  "id";
                         read -p "INSTANCE ID " INSTANCEID;
                         curl -s -XGET -H "Content-type: application/json" -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances/$INSTANCEID/root;
-                        source ~/rackspace_api_tool/menu.sh
-                        main_menu
+                        source ~/rackspace_api_tool/databases.sh
+                        instances
                         ;;
 	8|RestartDatabase)
                         curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances |tr "," "\n" |grep  "id";
                         read -p "INSTANCE ID " INSTANCEID;
 			cd ~/rackspace_api_tool;
                                 curl -v -d @restart_instance -XPOST -H "Content-type: application/json" -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances/$INSTANCEID/action
-                                source ~/rackspace_api_tool/menu.sh
-                                main_menu
+                                source ~/rackspace_api_tool/databases.sh
+                                instances
                         ;;
 	9|RESIZETHEINSTANCE)
                                 curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances |tr "," "\n" |grep  "id";
@@ -89,8 +88,8 @@ do
 				cd ~/rackspace_api_tool;
 				vi ~/rackspace_api_tool/resize_instance;
                                 curl -v -d @resize_instance -XPOST -H "Content-type: application/json" -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances/$INSTANCEID/action
-                                source ~/rackspace_api_tool/menu.sh
-                                main_menu
+                                source ~/rackspace_api_tool/databases.sh
+                                instances
                         ;;
 
         10|RESIZETHEINSTANCEVOLUME)
@@ -99,16 +98,16 @@ do
                                 cd ~/rackspace_api_tool;
                                 vi ~/rackspace_api_tool/resize_instance_volume;
                                 curl -v -d @resize_instance_volume -XPOST -H "Content-type: application/json" -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances/$INSTANCEID/action
-                                source ~/rackspace_api_tool/menu.sh
-                                main_menu
+                                source ~/rackspace_api_tool/databases.sh
+                                instances
                         ;;
         11|ListActiveDBs)
                         curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances |tr "," "\n" |grep "id";
                         echo -e -n "\nNOW CHOOSE ONE OF THE AVAILABLE INSTANCE IDs\n";
                         read -p "INSTANCE ID " INSTANCEID;
                         curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances/$INSTANCEID/databases |tr "{" "\n";
-                        source ~/rackspace_api_tool/menu.sh
-                        main_menu
+                        source ~/rackspace_api_tool/databases.sh
+                        instances
                         ;;
        12|LoginToTheDatabase)
                                 curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances |tr "," "\n" |grep  "id";
@@ -119,8 +118,8 @@ do
                                 read -p "DBUSER " DBUSER;
                                 read -p "HOSTNAME " HOSTNAME;
                                 mysql -h $HOSTNAME -u$DBUSER $DATABASE -p;
-                                source ~/rackspace_api_tool/menu.sh
-                                main_menu
+                                source ~/rackspace_api_tool/databases.sh
+                                instances
                                 ;;
 	13|CREATEDATABASEONEXISTINGINSTANCE)
 			curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances |tr "," "\n" |grep "id";
@@ -129,8 +128,8 @@ do
 			cd ~/rackspace_api_tool;
 			vi create_db_on_existing_instance;
 			curl -s -v -d @create_db_on_existing_instance -XPOST -H "Content-type: application/json" -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances/$INSTANCEID/databases |tr "," "\n";
-                        source ~/rackspace_api_tool/menu.sh
-                        main_menu
+                        source ~/rackspace_api_tool/databases.sh
+                        instances
                         ;;
 	14|DELETEDATABASE)
 			curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances |tr "," "\n" |grep "id";
@@ -140,8 +139,9 @@ do
                         echo -e -n "\nNOW CHOOSE THE DATABASE YOU WANT TO DELETE\n";
                         read -p "DATABASE NAME " DBNAME;
 			curl -s -XDELETE "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances/$INSTANCEID/databases/$DBNAME |tr "," "\n";
-                        source ~/rackspace_api_tool/menu.sh
-                        main_menu
+			echo -e -n "\nDATABASE SUCCESSFULLY DELETED\n"
+                        source ~/rackspace_api_tool/databases.sh
+                        instances
                         ;;
 	15|CREATEUSERFORASPECIFICDATABASE)
 			curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances |tr "," "\n" |grep "id";
@@ -151,8 +151,8 @@ do
                         cd ~/rackspace_api_tool;
                         vi create_user_for_instance;
 			curl -s -v -d @create_user_for_instance -XPOST -H "Content-type: application/xml" -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances/$INSTANCEID/users |tr "," "\n";
-                        source ~/rackspace_api_tool/menu.sh
-                        main_menu
+                        source ~/rackspace_api_tool/databases.sh
+                        instances
                         ;;	
 	16|LISTALLACTIVEUSERSINDATABASEINSTANCE)
 			curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances |tr "," "\n" |grep "id";
@@ -160,8 +160,8 @@ do
                         read -p "INSTANCE ID " INSTANCEID;
                         curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances/$INSTANCEID |tr "," "\n" |grep "name";
 			curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances/$INSTANCEID/users |tr "," "\n";
-			source ~/rackspace_api_tool/menu.sh
-                        main_menu
+			source ~/rackspace_api_tool/databases.sh
+                        instances
                         ;;
         17|MAINMENU)
                         echo " PLEASE CHOOSE ONE OF THE FOLLOWING DATABASE INSTANCE OPTIONS: "
