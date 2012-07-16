@@ -1,5 +1,7 @@
 This code is still in BETA version. But it should still do the task.
 
+You will be required to have "vi" installed. 
+
 Once downloaded, run ./API_TOOL.sh
 
 The location of the file should be in your home directory:
