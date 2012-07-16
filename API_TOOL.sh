@@ -1,39 +1,39 @@
 #! /bin/bash
 
-authenticate= read -p "USERNAME " USERNAME; read -p "RACKSPACE ACCOUNT NUMBER/DDI " ACCOUNT; read -p "API KEY (PROVIDED BY RACKSPACE WHEN THE ACCOUNT IS CREATED) " APIKEY;read -p "DATACENTER LOCATION " LOCATION;
-
-auth_response="$(curl -i -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Key: $APIKEY"  https://$LOCATION.identity.api.rackspacecloud.com/v1.0 | egrep -e '(^HTTP/1.1|^X-Auth-Token)')"
-
-APITOKEN=
-
-if [ "$(echo "$auth_response" | head -1 | awk '{print $2}')" = "204" ]; then
-	APITOKEN="$(echo "$auth_response" | tail -1 | awk '{print $NF}' | sed -e 's/[\r\n]//g')"
-else
-	echo	"Authentication failed"
-	exit
-fi
-
-while true; do 
-	echo -e -n "\n\tCHOOSE ONE OF THE FOLLOWING OPTIONS:\n\n"
-	echo "1 DATABASE INSTANCES"
-	echo "2 EXIT"
+authenticate= read -p "USERNAME " USERNAME; read -p "RACKSPACE ACCOUNT NUMBER/DDI " ACCOUNT; read -p "API KEY (PROVIDED BY RACKSPACE WHEN THE ACCOUNT IS CREATED) " APIKEY;
+while true;
+do
+	echo -e -n "\nDataCenter Location: \n"
+	echo "1 LON"
+	echo "2 DFW"
+	echo "3 ORD"
 
 	read CONFIRM
 	case $CONFIRM in
-		1|INSTANCES)
-			if [ "./databases.sh" ]; then
-				source ./databases.sh
-				instances
-			else
-                                echo "CHOOSE ONE OF THE AVAILABLE OPTIONS"
-                        fi
-                        ;;
-		2|EXIT)
-			echo "THANK YOU FOR USING THE API CLIENT"
-			exit
-			;;
-		*) 
-			echo "UNFORTUNATELY THIS IS NOT A VALID ENTRY. CLOSING. GOOD BYE"
-			;;
+	1|LON)
+		if [ "./lonauth.sh" ]; then
+                   source ./lonauth.sh
+                   lonauth
+		else
+		echo -e -n "\n Authentication Failed\n" 
+		fi
+;;	
+	2|DFW)
+		if [ "./dfwauth.sh" ]; then
+                 source ./dfwauth.sh
+                 dfwauth;
+                else
+                echo -e -n "\n Authentication Failed\n" 
+		fi
+;;
+	3|ORD)
+		if [ "./dfwauth.sh" ]; then
+                source ./dfwauth.sh
+                dfwauth;
+                else
+                echo -e -n "\n Authentication Failed\n" 
+		fi
+;;
 	esac
-done
+	done
+			
