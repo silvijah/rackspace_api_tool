@@ -32,9 +32,9 @@ do
 			instances
 			;;
         2|CreateANewDB)
-                                cd .;
-				vi ./create_db_instance;
-                                curl -s -v -d @create_db_instance -XPOST -H "Content-type: application/json" -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances |tr "," "\n" |egrep "created|status|id|hostname|updated"
+				source ./create_db_function.sh
+				createdbinstance
+                                curl -s -d @createdbinstance -XPOST -H "Content-type: application/json" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances |tr "," "\n" |egrep "created|status|id|hostname|updated"
                                 source ./databases.sh
                                 instances
                         ;;
@@ -125,9 +125,9 @@ do
 			curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances |tr "," "\n" |grep "id";
                         echo -e -n "\nNOW CHOOSE ONE OF THE AVAILABLE INSTANCE IDs\n";
                         read -p "INSTANCE ID " INSTANCEID;
-			cd .;
-			vi create_db_on_existing_instance;
-			curl -s -v -d @create_db_on_existing_instance -XPOST -H "Content-type: application/json" -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances/$INSTANCEID/databases |tr "," "\n";
+			source ./create_db_existing_instance.sh
+			createdbexistinginstance
+			curl -s -d @create_db_on_existing_instance -XPOST -H "Content-type: application/json" -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances/$INSTANCEID/databases |tr "," "\n";
                         source ./databases.sh
                         instances
                         ;;
@@ -148,9 +148,9 @@ do
                         echo -e -n "\nNOW CHOOSE ONE OF THE AVAILABLE INSTANCE IDs\n";
                         read -p "INSTANCE ID " INSTANCEID;
 			curl -s -XGET "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances/$INSTANCEID |tr "," "\n" |grep "name";
-                        cd .;
-                        vi create_user_for_instance;
-			curl -s -v -d @create_user_for_instance -XPOST -H "Content-type: application/xml" -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances/$INSTANCEID/users |tr "," "\n";
+			source ./createuserforinstance.sh
+                        createuserforinstance
+			curl -s -d @create_user_for_instance -XPOST -H "Content-type: application/json" -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances/$INSTANCEID/users |tr "," "\n";
                         source ./databases.sh
                         instances
                         ;;	

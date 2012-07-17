@@ -1,13 +1,13 @@
-<users xmlns="http://docs.openstack.org/database/api/v1.0">
-<user name="your_username" password="your_password">
-<databases>
-<database name="database_name_user_needs_to_have_access_to"/>
-</databases>
-</user>
-<user name="user_name" password="your_password">
-<databases>
-<database name="multiple_databases_for_user_to_access"/>
-<database name="multiple_databases_for_user_to_access"/>
-</databases>
-</user>
-</users>
+{
+"users": [
+{
+"databases": [
+{
+"name": "db_name"
+}
+],
+"name": "username",
+"password": "password"
+}
+]
+}
