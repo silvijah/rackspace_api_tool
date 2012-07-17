@@ -4,22 +4,19 @@
 {
 "character_set": "utf8",
 "collate": "utf8_general_ci",
-"name": "database_name"
-},
-{
-"name": "database2_name"
+"name": "sylvia2056db"
 }
 ],
 "flavorRef": "https://ord.databases.api.rackspacecloud.com/v1.0/1234/flavors/1",
-"name": "instance_name",
+"name": "sylvia2056inst",
 "users": [
 {
 "databases": [
 {
-"name": "database_name"
+"name": "sylvia2056db"
 }
 ],
-"name": "user_name",
+"name": "sylvia2056user",
 "password": "password"
 }
 ],

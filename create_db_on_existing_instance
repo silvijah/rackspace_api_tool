@@ -3,10 +3,7 @@
 {
 "character_set": "utf8",
 "collate": "utf8_general_ci",
-"name": "database_name"
-},
-{
-"name": "database2_name"
+"name": "sylvia2101db"
 }
 ]
 }
