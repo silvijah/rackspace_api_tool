@@ -1,11 +1,18 @@
 
+This cli is still in BETA version. I am constantly working on improving it.
 
-This code is still in BETA version. But it should still do the task.
+It basically does all of the leg work that is related working with cURL and getting the API tool responces. 
+With this cli you do not need to know the exact syntax. It will do it all for you.
+
+I recommend running it from the Cloud Server rather than a normal server. Running from the Cloud Server will allow you 
+to login to the MySQL server as well. All the MySQL access from elswhere is blocked.
+
+
+I will be modifying the look and description of the available options so it would be easier to read.
 
 Once downloaded, run ./API_TOOL.sh
 
-
-I will be improving the look and description of the available options so it would be easier to read.
+You will be prompted to enter the following:
 
 USERNAME your_account_username
 ACCOUNT your_account_number
