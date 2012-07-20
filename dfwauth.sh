@@ -5,6 +5,7 @@ function dfwauth()
 
 auth_response="$(curl -i -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Key: $APIKEY"  https://identity.api.rackspacecloud.com/v1.0 | egrep -e '(^HTTP/1.1|^X-Auth-Token)')"
 
+LOCATION=dfw
 APITOKEN=
 
 if [ "$(echo "$auth_response" | head -1 | awk '{print $2}')" = "204" ]; then

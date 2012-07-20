@@ -1,10 +1,11 @@
 #!/bin/bash
 
-function lonauth()
+function ordauth()
 {
-LOCATION=lon
-auth_response="$(curl -i -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Key: $APIKEY"  https://$LOCATION.identity.api.rackspacecloud.com/v1.0 | egrep -e '(^HTTP/1.1|^X-Auth-Token)')"
 
+auth_response="$(curl -i -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Key: $APIKEY"  https://identity.api.rackspacecloud.com/v1.0 | egrep -e '(^HTTP/1.1|^X-Auth-Token)')"
+
+LOCATION=ord
 APITOKEN=
 
 if [ "$(echo "$auth_response" | head -1 | awk '{print $2}')" = "204" ]; then
@@ -14,7 +15,6 @@ else
         exit
 fi
 
-export LOCATION
 while true; do
         echo -e -n "\n\tCHOOSE ONE OF THE FOLLOWING OPTIONS:\n\n"
         echo "1 DATABASE INSTANCES"

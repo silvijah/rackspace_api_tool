@@ -6,8 +6,6 @@ read -p "Please Enter your New Database name " DB1
 read -p "Please Enter your New Instance name " INSTANCE
 read -p "Please Enter your New Username " USER
 read -p "New Password " PASS
-read -p "Specify your location LON/DFW/ORD " LOCATION
-read -p "Specify your Account Number " ACCOUNT
 
 sed -i "7 s/\"name\":.*/\"name\": \"$DB1\"/" createdbinstance
 sed -i "11 s/\"name\":.*/\"name\": \"$INSTANCE\",/" createdbinstance

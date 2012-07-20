@@ -1,6 +1,9 @@
 #! /bin/bash
 
 authenticate= read -p "USERNAME " USERNAME; read -p "RACKSPACE ACCOUNT NUMBER/DDI " ACCOUNT; read -p "API KEY (PROVIDED BY RACKSPACE WHEN THE ACCOUNT IS CREATED) " APIKEY;
+
+export USERNAME ACCOUNT
+
 while true;
 do
 	echo -e -n "\nDataCenter Location: \n"
@@ -27,9 +30,9 @@ do
 		fi
 ;;
 	3|ORD)
-		if [ "./dfwauth.sh" ]; then
-                source ./dfwauth.sh
-                dfwauth;
+		if [ "./ordauth.sh" ]; then
+                source ./ordauth.sh
+                ordauth;
                 else
                 echo -e -n "\n Authentication Failed\n" 
 		fi
