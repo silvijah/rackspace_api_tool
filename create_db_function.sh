@@ -7,11 +7,26 @@ read -p "Please Enter your New Instance name " INSTANCE
 read -p "Please Enter your New Username " USER
 read -p "New Password " PASS
 
-sed -i "7 s/\"name\":.*/\"name\": \"$DB1\"/" createdbinstance
-sed -i "11 s/\"name\":.*/\"name\": \"$INSTANCE\",/" createdbinstance
-sed -i "16 s/\"name\":.*/\"name\": \"$DB1\"/" createdbinstance
-sed -i "19 s/\"name\":.*/\"name\": \"$USER\",/" createdbinstance
-sed -i "20 s/\"password\":.*/\"password\": \"$PASS\"/" createdbinstance
-sed -i '10 s/"flavorRef":.*/"flavorRef": "https:\/\/$LOCATION.databases.api.rackspacecloud.com\/v1.0\/$ACCOUNT\/flavors\/1",/' createdbinstance
-}
+createinstance="
+{
+	\"instance\": {
+		\"databases\": [{
+			\"character_set\": \"utf8\",
+			\"collate\": \"utf8_general_ci\",
+			\"name\": \"$DB1\"
+		}],
+		\"flavorRef\": \"https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/flavors/1\",
+		\"name\": \"$INSTANCE\",
+		\"users\": [{
+			\"databases\": [{
+				\"name\": \"$DB1\"
+			}],
+			\"name\": \"$USER\",
+			\"password\": \"$PASS\"
+		}],
+		\"volume\": {\"size\": 2}
+	}
+}"
 
+export createinstance
+}

@@ -3,6 +3,7 @@
 function dfwauth()
 {
 
+VERSION=v2.0
 auth_response="$(curl -i -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Key: $APIKEY"  https://identity.api.rackspacecloud.com/v1.0 | egrep -e '(^HTTP/1.1|^X-Auth-Token)')"
 
 LOCATION=dfw
@@ -15,6 +16,7 @@ else
         exit
 fi
 
+export VERSION LOCATION
 while true; do
         echo -e -n "\n\tCHOOSE ONE OF THE FOLLOWING OPTIONS:\n\n"
         echo "1 DATABASE INSTANCES"
