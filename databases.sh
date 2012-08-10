@@ -34,7 +34,7 @@ do
         2|CreateANewDB)
 				source ./create_db_function.sh
 				createdbinstance
-                                curl -s -T - -XPOST -H "Content-type: application/json" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances <<< $createinstance |tr "," "\n" |egrep "created|status|id|hostname|updated|name" |tr ":" "\t"
+                                curl -s -T - -XPOST -H "Content-type: application/json" -H "X-Auth-Token: $APITOKEN" $(get_location)/$ACCOUNT/instances <<< $createinstance |tr "," "\n" |egrep "created|status|id|hostname|updated|name" |tr ":" "\t"
                                 source ./databases.sh
                                 instances
                         ;;
