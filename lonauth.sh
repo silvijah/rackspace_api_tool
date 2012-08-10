@@ -1,10 +1,25 @@
 #!/bin/bash
 
-function lonauth()
+function get_location() {
+        location_string=""
+        
+        if [[ ${LOCATION} == "lon" ]];then
+                location_string="lon."
+        fi
+        echo https://${location_string}databases.api.rackspacecloud.com/v1.0
+}
+
+function auth()
 {
+LOCATION=$1
 VERSION=v1.0
-LOCATION=lon
-auth_response="$(curl -i -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Key: $APIKEY"  https://$LOCATION.identity.api.rackspacecloud.com/$VERSION | egrep -e '(^HTTP/1.1|^X-Auth-Token)')"
+
+if [[ ${LOCATION} == "lon" ]];then
+        LOCATIONSTR="lon."
+else
+        LOCATIONSTR=""
+fi
+auth_response="$(curl -i -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Key: $APIKEY"  https://$LOCATIONSTR.identity.api.rackspacecloud.com/$VERSION | egrep -e '(^HTTP/1.1|^X-Auth-Token)')"
 
 APITOKEN=
 
