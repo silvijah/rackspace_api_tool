@@ -531,41 +531,41 @@ done
 
 function alarms() {
 
-echo -e -n "\n1 Create An Alarm"
-echo -e -n "\n2 Test Created Alarm"
-echo -e -n "\n3 List Created Alarms"
-echo -e -n "\n4 Information About a Specific Alarm"
-echo -e -n "\n5 Modify a Specific Alarm"
-echo -e -n "\n6 Delete a Specific Alarm"
-echo -e -n "\n \t-----\n"
-echo -e -n "\n15 \tBack to Monitoring Options Menu"
+#echo -e -n "\n1 Create An Alarm"
+#echo -e -n "\n2 Test Created Alarm"
+#echo -e -n "\n3 List Created Alarms"
+#echo -e -n "\n4 Information About a Specific Alarm"
+#echo -e -n "\n5 Modify a Specific Alarm"
+#echo -e -n "\n6 Delete a Specific Alarm"
+#echo -e -n "\n \t-----\n"
+#echo -e -n "\n15 \tBack to Monitoring Options Menu"
 echo -e -n "\n0 \tExit\n"
 
 
-while true
-do
+#while true
+#do
 
-                read CONFIRM
-                case $CONFIRM in
+#                read CONFIRM
+#                case $CONFIRM in
 
-	1|createalarm)
+#	1|createalarm)
 		
-		;;
-        15|MAINMENU)
-                        echo " PLEASE CHOOSE ONE OF THE FOLLOWING DATABASE INSTANCE OPTIONS: "
-                        if [ "./monitoring.sh" ]; then
+#		;;
+#        15|MAINMENU)
+                        echo " Alarm tools are coming soon. Please choose one of the available MONITORING OPTIONS: "
+#                        if [ "./monitoring.sh" ]; then
                         source ./monitoring.sh
                                 monitoring
-                        else
-echo "CHOOSE ONE OF THE AVAILABLE OPTIONS"
-                        fi
-                        ;;
-        0|Exit)
+#                        else
+#echo "CHOOSE ONE OF THE AVAILABLE OPTIONS"
+#                        fi
+#                        ;;
+#        0|Exit)
       echo " THANK YOU FOR USING API CLIENT "
       exit
       ;;
-    *) echo " UNFORTUNATELY THIS IS NOT A VALID ENTRY. CLOSING. GOOD BYE "
-  esac
-
-done
+#    *) echo " UNFORTUNATELY THIS IS NOT A VALID ENTRY. CLOSING. GOOD BYE "
+#  esac
+#
+#done
 }
