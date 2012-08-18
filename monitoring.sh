@@ -362,26 +362,28 @@ do
 			Notify When in OK State  - ok_state
 			Notify When in Error State  - error_state 
 			" notificationstatus
-		curl -i -X POST --data-binary '{      "label": "'$NAMEOFAPLAN'",      "'$notificationstatus'": [          "'$notification'"      ]}' -H "X-Auth-Token: $APITOKEN" -H "Content-Type: application/json" -H "Accept: application/json" https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/notification_plans
+		curl -i -X POST --data-binary '{      "label": "'$NAMEOFAPLAN'",      "'$notificationstatus'": [          "'$notification'"      ]}' -H "X-Auth-Token: $APITOKEN" -H "Content-Type: application/json" -H "Accept: application/json" https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/notification_plans |egrep "HTTP|Date|Location"
 			source ./monitoring.sh
                         notification_plan
 		;;
 	4|modifyplan)
-		curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/notifications
-                read -p "Enter Notification ID: " notificationid
+		curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/notification_plans
+                read -p "Enter Notification Plan ID: " notificationplanid
+		curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/notifications 
+		read -p "Enter Notification ID: " notificationid
 		read -p "Choose one of the Following Notification Options:
                         Notify When in Warning State - warning_state
                         Notify When in OK State  - ok_state
                         Notify When in Error State  - error_state 
-			" notificationstatus
-                curl -s -XPUT  --data-binary '{      "label": "'$NAMEOFAPLAN'",      "'$notificationstatus'": [          "'$notificationid'"      ]}' -H "X-Auth-Token: $APITOKEN" -H "Content-Type: application/json" -H "Accept: application/json" https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/notification_plans
+						" notificationstatus
+                curl -s -XPUT -i  -d '{      "'$notificationstatus'": [ "'$notificationid'"] }' -H "X-Auth-Token: $APITOKEN" -H "Content-Type: application/json" -H "Accept: application/json" https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/notification_plans/$notificationplanid |egrep "HTTP|Date|Location"
 			source ./monitoring.sh
                         notification_plan
 			;;
 	5|deleteplan)
 		curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/notification_plans
 		read -p "Enter Notification Plan ID: " planid
-		curl -s -XDELETE -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/notification_plans/$planid
+		curl -s -i -XDELETE -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/notification_plans/$planid |egrep "HTTP|Date"
 		source ./monitoring.sh
                         notification_plan
 		;;
