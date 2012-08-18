@@ -529,7 +529,7 @@ done
 
 }
 
-function alarms() {
+#function alarms() {
 
 #echo -e -n "\n1 Create An Alarm"
 #echo -e -n "\n2 Test Created Alarm"
@@ -541,31 +541,4 @@ function alarms() {
 #echo -e -n "\n15 \tBack to Monitoring Options Menu"
 echo -e -n "\n0 \tExit\n"
 
-
-#while true
-#do
-
-#                read CONFIRM
-#                case $CONFIRM in
-
-#	1|createalarm)
-		
-#		;;
-#        15|MAINMENU)
-                        echo " Alarm tools are coming soon. Please choose one of the available MONITORING OPTIONS: "
-#                        if [ "./monitoring.sh" ]; then
-                        source ./monitoring.sh
-                                monitoring
-#                        else
-#echo "CHOOSE ONE OF THE AVAILABLE OPTIONS"
-#                        fi
-#                        ;;
-#        0|Exit)
-      echo " THANK YOU FOR USING API CLIENT "
-      exit
-      ;;
-#    *) echo " UNFORTUNATELY THIS IS NOT A VALID ENTRY. CLOSING. GOOD BYE "
-#  esac
-#
-#done
-}
+#}
