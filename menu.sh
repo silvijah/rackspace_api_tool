@@ -7,7 +7,8 @@ while true; do
 	echo -e -n "\n\nCHOOSE ONE OF THE FOLLOWING OPTIONS:"
 	echo -e -n "\n1 MAIN MENU"
 	echo -e -n "\n2 DATABASES"
-	echo -e -n "\n3 EXIT\n"
+	echo -e -n "\n3 MONITORING"
+	echo -e -n "\n0 EXIT\n"
 
 	read CONFIRM
 	case $CONFIRM in
@@ -29,7 +30,17 @@ while true; do
                                 echo "CHOOSE ONE OF THE AVAILABLE OPTIONS"
                         fi
                         ;;
-		3|EXIT)
+		3|MONITORING)
+		echo " PLEASE CHOOSE ONE OF THE FOLLOWING MONITORING INSTANCE OPTIONS: "
+                        if [ "./monitoring.sh" ]; then
+                                source ./monitoring.sh
+                                monitoring
+                        else
+                                echo "CHOOSE ONE OF THE AVAILABLE OPTIONS"
+                        fi
+                        ;;
+
+		0|EXIT)
 			echo "THANK YOU FOR USING THE API CLIENT"
 			exit
 			;;

@@ -20,7 +20,8 @@ export VERSION LOCATION
 while true; do
         echo -e -n "\n\tCHOOSE ONE OF THE FOLLOWING OPTIONS:\n\n"
         echo "1 DATABASE INSTANCES"
-        echo "2 EXIT"
+	echo "2 MONITORING"
+        echo "3 EXIT"
 
         read CONFIRM
         case $CONFIRM in
@@ -32,7 +33,15 @@ while true; do
                                 echo "CHOOSE ONE OF THE AVAILABLE OPTIONS"
                         fi
                         ;;
-                2|EXIT)
+		2|MONITORING)	
+			if [ ".monitoring.sh" ]; then
+				source ./monitoring.sh
+				monitoring
+			else
+				echo "CHOOSE ONE OF THE AVAILABLE OPTIONS"
+			fi
+			;;	
+                3|EXIT)
                         echo "THANK YOU FOR USING THE API CLIENT"
                         exit
                         ;;
