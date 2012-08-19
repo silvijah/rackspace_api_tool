@@ -141,7 +141,7 @@ do
                 read CONFIRM
                 case $CONFIRM in
 
-        1|listcheck)    curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities |egrep "id|label|*_v4|uri"
+        1|listcheck)    curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities |egrep "id|label|*_v4|uri|default"
                         read -p "Entity Name " entityname
                         curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities/$entityname/checks/
                         source ./monitoring.sh
@@ -149,6 +149,7 @@ do
                         ;;
         2|getcheck)     curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities
                         read -p "Entity Name " entityname
+			curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities/$entityname/checks
                         read -p "Check Name " CHECKNAME
                         curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities/$entityname/checks/$checkname
                         source ./monitoring.sh
@@ -157,7 +158,7 @@ do
         3|Createcheck)
                         curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities
                         read -p "Entity Name " entityname
-                        read -p "Check Name " CHECKNAME
+                        read -p "New Check Name " CHECKNAME
                         read -p "Monitoring Zone Name: mzdfw/mzlon/mzhkg/mzord/mziad " ZONE
                         read -p "Available Monitoring Checks to Choose from:
                                 remote.dns
@@ -179,6 +180,8 @@ do
                         checks
                         ;;
         4|Modifycheck)
+			curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities
+			read -p "Entity ID: " entitymofifycheck
                         curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities/$entityname/checks
                         read -p "Check ID: " checkid;
 				read -p "New Check Name: " newcheckname
@@ -192,15 +195,16 @@ do
         5|Deletecheck)
                         curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities |egrep "id|public0_v4|private0_v4";
                         read -p "Entity Name " entityname;
-                        curl -s -i -XGET -H "X-Auth-Token: $APITOKEN" -H 'Accept: application/json' https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities/$entityname/checks;
+                        curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Accept: application/json' https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities/$entityname/checks;
 			read -p "Check Name you want to delete: " deletecheck
 			curl -s -i -XDELETE -H "X-Auth-Token: $APITOKEN" -H 'Accept: application/json' https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities/$entityname/checks/$deletecheck |egrep "HTTP|Date"
                         source ./monitoring.sh
                         checks
                         ;;
         6|testcheck)
-                        curl -i -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities |egrep "id|public0_v4|private0_v4"
+                        curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities |egrep "id|public0_v4|private0_v4|default"
                         read -p "Entity Name " entityname
+			curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities/$entityname/checks
                         read -p "Check Name " CHECKNAME
                         read -p "Monitoring Zone Name: mzdfw/mzlon/mzhkg/mzord/mziad " ZONE
                         read -p "Available Monitoring Checks to Choose from:
@@ -223,7 +227,7 @@ do
                         checks
                         ;;
         7|testexistingcheck)
-                        curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities |egrep "id|public0_v4|private0_v4"
+                        curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities |egrep "id|public0_v4|private0_v4|default"
                         read -p "Entity Name " entityname
                         curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities/$entityname/checks/
 			read -p "Check ID: " checkidtest
@@ -269,12 +273,12 @@ do
                 case $CONFIRM in
 
         1|listentity)
-                        curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities |egrep "id|label|*_v4|count|limit"
+                        curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities |egrep "id|label|*_v4|default|count|limit"
                         source ./monitoring.sh
                         entities
                         ;;
         2|getentity)
-                        curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities |egrep "id|public0_v4|private0_v4"
+                        curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities |egrep "id|public0_v4|private0_v4|default"
                         read -p "Entity Name " entityname
                         curl -s -i -XGET --data-binary '{"ip_addresses": {"default": "'$NEWIP'"}}' -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json' https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities/$entityname |egrep -v "X-*|*-Encoding"
                         source ./monitoring.sh
@@ -288,7 +292,7 @@ do
                         entities
                         ;;
         4|Modifyentity)
-                        curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities |egrep "id|public0_v4|private0_v4"
+                        curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities |egrep "id|public0_v4|private0_v4|default"
                         read -p "Entity Name " entityname
                         read -p "Specify New IP you want to Monitor " NEWIP
                         curl -s -i -XPUT --data-binary '{"ip_addresses": {"default": "'$NEWIP'"}}' -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json' https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities/$entityname |egrep "Data|Location"
@@ -296,7 +300,7 @@ do
                         entities
                         ;;
         5|Deleteentity)
-                        curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities |egrep "id|public0_v4|private0_v4"
+                        curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities |egrep "id|public0_v4|private0_v4|default"
                         read -p "Entity Name " entityname
                         curl -s -i -XDELETE -H "X-Auth-Token: $APITOKEN" -H 'Accept: application/json' https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities/$entityname
                         source ./monitoring.sh
@@ -461,7 +465,6 @@ do
 			read -p "Specify an Email address to send an alert Notification to: " EMAIL
 #			curl -s -XPOST -d '{ "details" : { "address" : "'$EMAIL'" }  "label": "email",  "type": "email"}' -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json' https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/notifications
 			curl -s -XPOST -d '{ "label" : "email", "type" : "email", "details" : { "address" : "'$EMAIL'" } }' -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json' https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/notifications
-
 			source ./monitoring.sh
                         notifications
 			esac
@@ -533,39 +536,140 @@ function alarms() {
 
 #echo -e -n "\n1 Create An Alarm"
 #echo -e -n "\n2 Test Created Alarm"
-#echo -e -n "\n3 List Created Alarms"
-#echo -e -n "\n4 Information About a Specific Alarm"
+echo -e -n "\n3 List Created Alarms"
+echo -e -n "\n4 Information About a Specific Alarm"
 #echo -e -n "\n5 Modify a Specific Alarm"
-#echo -e -n "\n6 Delete a Specific Alarm"
-#echo -e -n "\n \t-----\n"
-#echo -e -n "\n15 \tBack to Monitoring Options Menu"
+echo -e -n "\n6 Delete a Specific Alarm"
+echo -e -n "\n \t-----\n"
+echo -e -n "\n15 \tBack to Monitoring Options Menu"
 echo -e -n "\n0 \tExit\n"
 
 
-#while true
-#do
+while true
+do
 
-#                read CONFIRM
-#                case $CONFIRM in
+                read CONFIRM
+                case $CONFIRM in
 
-#	1|createalarm)
+	1|createalarm)
+		echo -e -n "\n1 Create remote.dns Alarm"
+		echo -e -n "\n2 Create remote.ssh Alarm"
+		echo -e -n "\n3 Create remote.smtp Alarm"
+		echo -e -n "\n4 Create remote.http Alarm"
+		echo -e -n "\n5 Create remote.tcp Alarm"
+		echo -e -n "\n6 Create remote.ping Alarm"
+		echo -e -n "\n7 Create remote.ftp-banner Alarm"
+		echo -e -n "\n8 Create remote.imap-banner Alarm"
+		echo -e -n "\n9 Create remote.smtp-banner Alarm"
+		echo -e -n "\n10 Create remote.postgresql-banner Alarm"
+		echo -e -n "\n11 Create remote.telnet-banner Alarm"
+		echo -e -n "\n12 Create remote.mysql-banner Alarm"		
+		echo -e -n "\n13 Create remote.mssql-banner Alarm"
 		
-#		;;
-#        15|MAINMENU)
+			while true
+			do
+				read CONFIRM
+				case $CONFIRM in
+
+		1|remote.dns)	
+			source ./monitoring.sh
+                       alarms
+			;;
+		2|remote.ssh)
+			source ./monitoring.sh
+                       alarms
+			;;
+		3|remote.smtp)
+			source ./monitoring.sh
+                       alarms
+			;;
+		4|remote.http)
+			source ./monitoring.sh
+                       alarms
+			;;			
+		5|remote.tcp)
+			source ./monitoring.sh
+                       alarms
+			;;
+		6|remote.ping)
+			source ./monitoring.sh
+                       alarms
+                        ;;
+		7|remote.ftp-banner)
+			source ./monitoring.sh
+                       alarms
+                        ;;
+		8|remote.imap-banner)
+			source ./monitoring.sh
+                       alarms
+                        ;;
+		9|remote.smtp-banner)
+			source ./monitoring.sh
+                       alarms
+                        ;;
+		10|remote.postgresql-banner)
+			source ./monitoring.sh
+                       alarms
+                        ;;
+		11|remote.telnet-banner)
+			source ./monitoring.sh
+                       alarms
+                        ;;
+		12|remote.mysql-banner)
+			source ./monitoring.sh
+                       alarms
+                        ;;
+		13|remote.mssql-banner)
+			source ./monitoring.sh
+                       alarms
+                        ;;
+		esac
+			done
+			;;
+	2|testalarm)
+		source ./monitoring.sh
+                       alarms		
+		;;
+	3|listalarms)
+		curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities
+		read -p "Entity ID: " entityid
+		curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities/$entityid/alarms
+		source ./monitoring.sh
+                       alarms
+		;;
+	4|getalarm)
+		curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities
+                read -p "Entity ID: " entityid
+                curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities/$entityid/alarms
+		read -p "Alarm ID: " alarmid
+		curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities/$entityid/alarms/$alarmid
+		source ./monitoring.sh
+                       alarms
+		;;
+	6|deletealarm)
+		curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities
+                read -p "Entity ID: " entityidtodelete
+                curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities/$entityidtodelete/alarms
+                read -p "Alarm ID: " alarmidtodelete
+                curl -s -i -XDELETE -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities/$entityidtodelete/alarms/$alarmidtodelete |egrep "HTTP|Date"
+		source ./monitoring.sh
+                       alarms
+		;;
+        15|MAINMENU)
                         echo " Alarm tools are coming soon. Please choose one of the available MONITORING OPTIONS: "
-#                        if [ "./monitoring.sh" ]; then
+                        if [ "./monitoring.sh" ]; then
                         source ./monitoring.sh
                                 monitoring
-#                        else
-#echo "CHOOSE ONE OF THE AVAILABLE OPTIONS"
-#                        fi
-#                        ;;
-#        0|Exit)
+                        else
+echo "CHOOSE ONE OF THE AVAILABLE OPTIONS"
+                        fi
+                        ;;
+        0|Exit)
       echo " THANK YOU FOR USING API CLIENT "
       exit
       ;;
-#    *) echo " UNFORTUNATELY THIS IS NOT A VALID ENTRY. CLOSING. GOOD BYE "
-#  esac
-#
-#done
+    *) echo " UNFORTUNATELY THIS IS NOT A VALID ENTRY. CLOSING. GOOD BYE "
+  esac
+
+done
 }
