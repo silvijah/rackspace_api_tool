@@ -142,43 +142,107 @@ do
                 case $CONFIRM in
 
         1|listcheck)    curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities |egrep "id|label|*_v4|uri|default"
-                        read -p "Entity Name " entityname
+                        read -p "Entity ID " entityname
                         curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities/$entityname/checks/
                         source ./monitoring.sh
                         checks
                         ;;
         2|getcheck)     curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities
-                        read -p "Entity Name " entityname
+                        read -p "Entity ID " entityname
 			curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities/$entityname/checks
                         read -p "Check Name " CHECKNAME
                         curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities/$entityname/checks/$checkname
                         source ./monitoring.sh
                         checks
                         ;;
-        3|Createcheck)
-                        curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities
-                        read -p "Entity Name " entityname
-                        read -p "New Check Name " CHECKNAME
-                        read -p "Monitoring Zone Name: mzdfw/mzlon/mzhkg/mzord/mziad " ZONE
-                        read -p "Available Monitoring Checks to Choose from:
-                                remote.dns
-                                remote.ssh
-                                remote.smtp
-                                remote.http
-                                remote.tcp
-                                remote.ping
-                                remote.ftp-banner
-                                remote.imap-banner
-                                remote.pop3-banner
-                                remote.smtp-banner
-                                remote.postgresql-banner
-                                remote.telnet-banner
-                                remote.mysql-banner
-                                remote.mssql-banner " checknames
-                        curl -i -s -XPOST -d '{ "details" : {  },  "label" : "'$CHECKNAME'",  "monitoring_zones_poll" : [ "'$ZONE'" ],  "period" : "60",  "target_alias" : "default",  "timeout" : 30,  "type" : "'$checknames'" }' -H "X-Auth-Token: $APITOKEN" -H "Content-Type: application/json" -H "Accept: application/json" https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities/$entityname/checks/ |egrep "HTTP|Date|Location"
+	3|CreateCheck)
+		echo -e -n "\t\n1 \tCreate remote.dns Check"
+                echo -e -n "\t\n2 \tCreate remote.ssh Check"
+                echo -e -n "\t\n3 \tCreate remote.smtp Check"
+                echo -e -n "\t\n4 \tCreate remote.http Check"
+                echo -e -n "\t\n5 \tCreate remote.tcp Check"
+                echo -e -n "\t\n6 \tCreate remote.ping Check"
+                echo -e -n "\t\n7 \tCreate remote.ftp-banner Check"
+                echo -e -n "\t\n8 \tCreate remote.imap-banner Check"
+                echo -e -n "\t\n9 \tCreate remote.smtp-banner Check"
+                echo -e -n "\t\n10 \tCreate remote.postgresql-banner Check"
+                echo -e -n "\t\n11 \tCreate remote.telnet-banner Check"
+                echo -e -n "\t\n12 \tCreate remote.mysql-banner Check"            
+                echo -e -n "\t\n13 \tCreate remote.mssql-banner Check\n"
+
+
+while true
+do
+                                read CONFIRM
+                                case $CONFIRM in
+
+                1|remote.dns)
+			checknames=remote.dns
                         source ./monitoring.sh
-                        checks
+                       createcheck1
                         ;;
+                2|remote.ssh)
+			checknames=remote.ssh
+                        source ./monitoring.sh
+                       createcheck1
+                        ;;
+                3|remote.smtp)
+			checknames=remote.smtp
+                        source ./monitoring.sh
+                       createcheck1
+                        ;;
+                4|remote.http)
+			checknames=remote.http
+                        source ./monitoring.sh
+                       createcheck2
+                        ;;
+                5|remote.tcp)
+			checknames=remote.tcp
+                        source ./monitoring.sh
+                       createcheck1
+                        ;;
+                6|remote.ping)
+			checknames=remote.ping
+                        source ./monitoring.sh
+                       createcheck1
+                        ;;
+                7|remote.ftp-banner)
+			checknames=remote.ftp-banner
+                        source ./monitoring.sh
+                       createcheck1
+                        ;;
+                8|remote.imap-banner)
+			checknames=remote.imap-banner
+                        source ./monitoring.sh
+                       createcheck1
+                        ;;
+                9|remote.smtp-banner)
+			checknames=remote.smtp-banner
+                        source ./monitoring.sh
+                       createcheck1
+                        ;;
+                10|remote.postgresql-banner)
+			checknames=remote.postgresql-banner
+                        source ./monitoring.sh
+                       createcheck1
+                        ;;
+                11|remote.telnet-banner)
+			checknames=remote.telnet-banner
+                        source ./monitoring.sh
+                       createcheck1
+                        ;;
+                12|remote.mysql-banner)
+			checknames=remote.mysql-banner
+                        source ./monitoring.sh
+                       createcheck1
+                        ;;
+                13|remote.mssql-banner)
+			checknames=remote.mssql-banner
+                        source ./monitoring.sh
+                       createcheck1
+                esac
+                        done
+                     ;;
         4|Modifycheck)
 			curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities
 			read -p "Entity ID: " entitymofifycheck
@@ -194,7 +258,7 @@ do
                         ;;
         5|Deletecheck)
                         curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities |egrep "id|public0_v4|private0_v4";
-                        read -p "Entity Name " entityname;
+                        read -p "Entity ID " entityname;
                         curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Accept: application/json' https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities/$entityname/checks;
 			read -p "Check Name you want to delete: " deletecheck
 			curl -s -i -XDELETE -H "X-Auth-Token: $APITOKEN" -H 'Accept: application/json' https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities/$entityname/checks/$deletecheck |egrep "HTTP|Date"
@@ -203,7 +267,7 @@ do
                         ;;
         6|testcheck)
                         curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities |egrep "id|public0_v4|private0_v4|default"
-                        read -p "Entity Name " entityname
+                        read -p "Entity ID " entityname
 			curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities/$entityname/checks
                         read -p "Check Name " CHECKNAME
                         read -p "Monitoring Zone Name: mzdfw/mzlon/mzhkg/mzord/mziad " ZONE
@@ -221,14 +285,15 @@ do
                                 remote.postgresql-banner
                                 remote.telnet-banner
                                 remote.mysql-banner
-                                remote.mssql-banner " checknames
+                                remote.mssql-banner 
+				" checknames;
                         curl -i -s -XPOST -d '{ "details" : {  },  "label" : "'$CHECKNAME'",  "monitoring_zones_poll" : [ "'$ZONE'" ],  "period" : "60",  "target_alias" : "default",  "timeout" : 30,  "type" : "'$checknames'" }' -H "X-Auth-Token: $APITOKEN" -H "Content-Type: application/json" -H "Accept: application/json" https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities/$entityname/test-check/ |egrep "HTTP|Date|Location"
                         source ./monitoring.sh
                         checks
                         ;;
         7|testexistingcheck)
                         curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities |egrep "id|public0_v4|private0_v4|default"
-                        read -p "Entity Name " entityname
+                        read -p "Entity ID " entityname
                         curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities/$entityname/checks/
 			read -p "Check ID: " checkidtest
 			curl -s -XPOST -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities/$entityname/checks/$checkidtest/test
@@ -254,6 +319,31 @@ echo "CHOOSE ONE OF THE AVAILABLE OPTIONS"
 done
 }
 
+function createcheck1()
+{
+			curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities
+                        read -p "Entity ID " entityname
+                        read -p "New Check Name " CHECKNAME
+                        read -p "Monitoring Zone Name: mzdfw/mzlon/mzhkg/mzord/mziad " ZONE
+			curl -i -s -XPOST -d '{ "details" : {  },  "label" : "'$CHECKNAME'",  "monitoring_zones_poll" : [ "'$ZONE'" ],  "period" : "60",  "target_alias" : "default",  "timeout" : 30,  "type" : "'$checknames'" }' -H "X-Auth-Token: $APITOKEN" -H "Content-Type: application/json" -H "Accept: application/json" https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities/$entityname/checks/ |egrep "HTTP|Date|Location"
+                        source ./monitoring.sh
+                        checks
+                       
+}
+
+function createcheck2()
+{
+			curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities
+                        read -p "Entity ID " entityname
+                        read -p "New Check Name " CHECKNAME
+                        read -p "Monitoring Zone Name: mzdfw/mzlon/mzhkg/mzord/mziad " ZONE
+			read -p "URL you would like to monitor " URL
+
+			curl -i -s -XPOST -d '{ "label": "'$CHECKNAME'", "type": "'$checknames'", "details": { "url": "'$URL'", "method": "GET" }, "monitoring_zones_poll": [ "'$ZONE'" ], "timeout": 30, "period": 100, "target_alias": "default" }' -H "X-Auth-Token: $APITOKEN" -H "Content-Type: application/json" -H "Accept: application/json" https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities/$entityname/checks/ |egrep "HTTP|Date|Location"
+                        source ./monitoring.sh
+                        checks
+                       
+}
 
 function entities()
 {
@@ -534,7 +624,7 @@ done
 
 function alarms() {
 
-#echo -e -n "\n1 Create An Alarm"
+echo -e -n "\n1 Create An Alarm"
 #echo -e -n "\n2 Test Created Alarm"
 echo -e -n "\n3 List Created Alarms"
 echo -e -n "\n4 Information About a Specific Alarm"
@@ -552,19 +642,19 @@ do
                 case $CONFIRM in
 
 	1|createalarm)
-		echo -e -n "\n1 Create remote.dns Alarm"
-		echo -e -n "\n2 Create remote.ssh Alarm"
-		echo -e -n "\n3 Create remote.smtp Alarm"
-		echo -e -n "\n4 Create remote.http Alarm"
-		echo -e -n "\n5 Create remote.tcp Alarm"
-		echo -e -n "\n6 Create remote.ping Alarm"
-		echo -e -n "\n7 Create remote.ftp-banner Alarm"
-		echo -e -n "\n8 Create remote.imap-banner Alarm"
-		echo -e -n "\n9 Create remote.smtp-banner Alarm"
-		echo -e -n "\n10 Create remote.postgresql-banner Alarm"
-		echo -e -n "\n11 Create remote.telnet-banner Alarm"
-		echo -e -n "\n12 Create remote.mysql-banner Alarm"		
-		echo -e -n "\n13 Create remote.mssql-banner Alarm"
+		echo -e -n "\n1 \tCreate remote.dns Alarm"
+		echo -e -n "\n2 \tCreate remote.ssh Alarm"
+		echo -e -n "\n3 \tCreate remote.smtp Alarm"
+		echo -e -n "\n4 \tCreate remote.http Alarm"
+		echo -e -n "\n5 \tCreate remote.tcp Alarm"
+		echo -e -n "\n6 \tCreate remote.ping Alarm"
+		echo -e -n "\n7 \tCreate remote.ftp-banner Alarm"
+		echo -e -n "\n8 \tCreate remote.imap-banner Alarm"
+		echo -e -n "\n9 \tCreate remote.smtp-banner Alarm"
+		echo -e -n "\n10 \tCreate remote.postgresql-banner Alarm"
+		echo -e -n "\n11 \tCreate remote.telnet-banner Alarm"
+		echo -e -n "\n12 \tCreate remote.mysql-banner Alarm"		
+		echo -e -n "\n13 \tCreate remote.mssql-banner Alarm\n"
 		
 			while true
 			do
