@@ -9,6 +9,7 @@ while true; do
 #        echo "1 AUTHENTICATE"
         echo "1 DATABASE INSTANCES"
 	echo "2 MONITORING"
+	echo "3 NextGen SERVERS"
         echo "0 EXIT"
 
         read CONFIRM
@@ -27,6 +28,14 @@ while true; do
                         if [ "./monitoring.sh" ]; then
                                 source ./monitoring.sh
                                 monitoring
+                        else
+                                echo "CHOOSE ONE OF THE AVAILABLE OPTIONS"
+                        fi
+                        ;;
+		3|NEXTGEN)      
+                        if [ ".nextgen.sh" ]; then
+                                source ./nextgen.sh
+                                nextgenservers
                         else
                                 echo "CHOOSE ONE OF THE AVAILABLE OPTIONS"
                         fi

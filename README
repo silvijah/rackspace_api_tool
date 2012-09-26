@@ -5,7 +5,7 @@ It basically does all of the leg work that is related working with cURL and gett
 With this cli you do not need to know the exact syntax. It will do it all for you.
 
 I recommend running it from the Cloud Server rather than a normal server. Running from the Cloud Server will allow you 
-to login to the MySQL server as well. All the MySQL access from elswhere is blocked.
+to login to DBaaS MySQL server instance as well. All the MySQL access from elswhere is blocked.
 
 
 I will be modifying the look and description of the available options so it would be easier to read.
@@ -14,38 +14,26 @@ Once downloaded, run ./API_TOOL.sh
 
 You will be prompted to enter the following:
 
-USERNAME your_account_username
-ACCOUNT your_account_number
-API KEY API_Key_Provided_by_rackspace_when_you_join
-DATACENTER LOCATION it_can_be_either_lon_dfw_or_ord 
+USERNAME account_username
+RACKSPACE ACCOUNT NUMBER/DDI account_number
+API KEY (PROVIDED BY RACKSPACE WHEN THE ACCOUNT IS CREATED) api_key
 
-(whichever location your account is based. All of the UK Cloud customers are located in LON DC)
+DataCenter Location: 
+1 LON
+2 DFW
+3 ORD
 
-The Menu is looking something like this:
 
-	CHOOSE ONE OF THE FOLLOWING OPTIONS:
+(whichever location your account server is based in. All of the UK Cloud customers are located in LON DC)
+
+	The Menu is looking something like this:
+
+
+CHOOSE ONE OF THE FOLLOWING OPTIONS:
 
 1 DATABASE INSTANCES
-2 EXIT
-1
+2 MONITORING
+3 EXIT
 
 
-	1 LIST AVAILABLE FLAVORS 
-	2 CREATE A NEW INSTANCE (THIS CREATES A BRAND NEW DATABASE AND A USER FOR THE NEW INSTANCE) 
-	3 LIST ALL CREATED DATABASE INSTANCES 
-	4 LIST DATABASE INSTANCE STATUS AND DETAILS 
-	5 DELETE A SPECIFIC DATABASE INSTANCE 
-	6 ENABLE ROOT USER 
-	7 ROOT USER STATUS 
-	8 RESTART THE DATABASE INSTANCE 
-	9 RESIZE THE DATABASE INSTANCE 
-	10 RESIZE INSTANCE VOLUME 
-	11 LIST PRESENTLY ACTIVE DATABASES 
-	12 LOGIN TO THE DATABASE 
-	13 CREATE A DATABASE ON EXISTING INSTANCE 
-	14 DELETE DATABASE 
-	15 CREATE USER FOR A SPECIFIC DATABASE 
-	16 LIST USERS IN ACTIVE DATABASE INSTANCE 
-	17 MAIN MENU 
-	18 EXIT 
 

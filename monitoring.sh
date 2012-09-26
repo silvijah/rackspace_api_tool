@@ -12,7 +12,7 @@ echo -e -n "\n6 Alarms"
 #echo -e -n "\n5 List Available Monitoring Zones"
 echo -e -n "\n \t---------"
 echo -e -n "\n15 Back to Main Menu"
-echo -e -n "\n0 Exit\n"
+echo -e -n "\n0 Exit\n >>"
 
 while true
 do
@@ -68,7 +68,7 @@ echo -e -n "\n1 List Available Check Types"
 echo -e -n "\n2 Information about A Specific Check Type"
 echo -e -n "\n \t------"
 echo -e -n "\n15 \tBack to Monitoring Options Menu"
-echo -e -n "\n0 \tExit\n"
+echo -e -n "\n0 \tExit\n >>"
 
 
 while true
@@ -134,7 +134,7 @@ echo -e -n "\n6 \tTest Check Before It is Created"
 echo -e -n "\n7 \tTest an Existing Check"
 echo -e -n "\n \t------"
 echo -e -n "\n15 \tBack to Monitoring Options Menu"
-echo -e -n "\n0 \tExit\n"
+echo -e -n "\n0 \tExit\n >>"
 
 while true
 do
@@ -168,7 +168,7 @@ do
                 echo -e -n "\t\n10 \tCreate remote.postgresql-banner Check"
                 echo -e -n "\t\n11 \tCreate remote.telnet-banner Check"
                 echo -e -n "\t\n12 \tCreate remote.mysql-banner Check"            
-                echo -e -n "\t\n13 \tCreate remote.mssql-banner Check\n"
+                echo -e -n "\t\n13 \tCreate remote.mssql-banner Check\n >>"
 
 
 while true
@@ -355,7 +355,7 @@ echo -e -n "\n4 \tModify Entity"
 echo -e -n "\n5 \tDelete Entity"
 echo -e -n "\n \t-----\n"
 echo -e -n "\n15 \tBack to Monitoring Options Menu"
-echo -e -n "\n0 \tExit\n"
+echo -e -n "\n0 \tExit\n\n >>"
 
 while true
 do
@@ -427,7 +427,7 @@ echo -e -n "\n4 Modify A Notification Plan"
 echo -e -n "\n5 Delete A Notification Plan"
 echo -e -n "\n \t-----\n"
 echo -e -n "\n15 \tBack to Monitoring Options Menu"
-echo -e -n "\n0 \tExit\n"
+echo -e -n "\n0 \tExit\n >>"
 
 while true
 do
@@ -511,7 +511,7 @@ echo -e -n "\n6 Modify A Notification"
 echo -e -n "\n7 Delete A Notification"
 echo -e -n "\n \t-----\n"
 echo -e -n "\n15 \tBack to Monitoring Options Menu"
-echo -e -n "\n0 \tExit\n"
+echo -e -n "\n0 \tExit\n >>"
 
 while true
 do
@@ -632,7 +632,7 @@ echo -e -n "\n4 Information About a Specific Alarm"
 echo -e -n "\n6 Delete a Specific Alarm"
 echo -e -n "\n \t-----\n"
 echo -e -n "\n15 \tBack to Monitoring Options Menu"
-echo -e -n "\n0 \tExit\n"
+echo -e -n "\n0 \tExit\n >>"
 
 
 while true
@@ -654,7 +654,7 @@ do
 		echo -e -n "\n10 \tCreate remote.postgresql-banner Alarm"
 		echo -e -n "\n11 \tCreate remote.telnet-banner Alarm"
 		echo -e -n "\n12 \tCreate remote.mysql-banner Alarm"		
-		echo -e -n "\n13 \tCreate remote.mssql-banner Alarm\n"
+		echo -e -n "\n13 \tCreate remote.mssql-banner Alarm\n >>"
 		
 			while true
 			do
