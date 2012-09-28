@@ -21,7 +21,9 @@ while true; do
         echo -e -n "\n\tCHOOSE ONE OF THE FOLLOWING OPTIONS:\n\n"
         echo "1 DATABASE INSTANCES"
         echo "2 MONITORING"
-        echo "3 EXIT"
+	echo "3 NextGen Servers"
+	echo "4 LOAD BALANCERS"
+        echo "5 EXIT"
 
         read CONFIRM
         case $CONFIRM in
@@ -41,7 +43,24 @@ while true; do
                                 echo "CHOOSE ONE OF THE AVAILABLE OPTIONS"
                         fi
                         ;;      
-                3|EXIT)
+		3|NEXTGEN)
+                        if [ ".nextgen.sh" ]; then
+                                source ./nextgen.sh
+                                nextgenservers
+                        else
+                                echo "CHOOSE ONE OF THE AVAILABLE OPTIONS"
+                        fi
+                        ;;
+                4|LBAAS)
+                        if [ "lbaas.sh" ]; then
+                                source ./lbaas.sh
+                                loadbalancers
+                        else
+                                echo "CHOOSE ONE OF THE AVAILABLE OPTIONS"
+                        fi
+                        ;;
+
+                5|EXIT)
                         echo "THANK YOU FOR USING THE API CLIENT"
                         exit
                         ;;
