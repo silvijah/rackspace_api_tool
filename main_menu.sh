@@ -10,6 +10,7 @@ while true; do
         echo "1 DATABASE INSTANCES"
 	echo "2 MONITORING"
 	echo "3 NextGen SERVERS"
+	echo "4 LOAD BALANCERS"
         echo "0 EXIT"
 
         read CONFIRM
@@ -32,7 +33,7 @@ while true; do
                                 echo "CHOOSE ONE OF THE AVAILABLE OPTIONS"
                         fi
                         ;;
-		3|NEXTGEN)      
+		3|NEXTGEN)
                         if [ ".nextgen.sh" ]; then
                                 source ./nextgen.sh
                                 nextgenservers
@@ -40,6 +41,15 @@ while true; do
                                 echo "CHOOSE ONE OF THE AVAILABLE OPTIONS"
                         fi
                         ;;
+                4|LBAAS)
+                        if [ "lbaas.sh" ]; then
+                                source ./lbaas.sh
+                                loadbalancers
+                        else
+                                echo "CHOOSE ONE OF THE AVAILABLE OPTIONS"
+                        fi
+                        ;;
+
 
                 0|EXIT)
                         echo "THANK YOU FOR USING THE API CLIENT"

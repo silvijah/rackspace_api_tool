@@ -8,6 +8,8 @@ while true; do
 	echo -e -n "\n1 MAIN MENU"
 	echo -e -n "\n2 DATABASES"
 	echo -e -n "\n3 MONITORING"
+	echo -e -n "\n4 NEXTGEN SERVERS"
+	echo -e -n "\n5 LOAD BALANCERS"
 	echo -e -n "\n0 EXIT\n"
 
 	read CONFIRM
@@ -39,6 +41,23 @@ while true; do
                                 echo "CHOOSE ONE OF THE AVAILABLE OPTIONS"
                         fi
                         ;;
+		4|NEXTGEN)
+                        if [ ".nextgen.sh" ]; then
+                                source ./nextgen.sh
+                                nextgenservers
+                        else
+                                echo "CHOOSE ONE OF THE AVAILABLE OPTIONS"
+                        fi
+                        ;;
+                5|LBAAS)
+                        if [ "lbaas.sh" ]; then
+                                source ./lbaas.sh
+                                loadbalancers
+                        else
+                                echo "CHOOSE ONE OF THE AVAILABLE OPTIONS"
+                        fi
+                        ;;
+
 
 		0|EXIT)
 			echo "THANK YOU FOR USING THE API CLIENT"
