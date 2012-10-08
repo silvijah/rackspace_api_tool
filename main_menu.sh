@@ -56,7 +56,7 @@ while true; do
                         exit
                         ;;
                 *)
-                        echo "UNFORTUNATELY THIS IS NOT A VALID ENTRY. CLOSING. GOOD BYE"
+                        echo "UNFORTUNATELY THIS IS NOT A VALID ENTRY. CHOOSE FROM THE AVAILABLE OPTIONS MENU. "
                         ;;
         esac
 done

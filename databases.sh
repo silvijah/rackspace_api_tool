@@ -1,5 +1,8 @@
 #!/bin/bash
 
+
+instance_id="$(curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances |tr "," "\n" |egrep "name")"
+
 function databases() {
 
 echo -e -n "\n\n1 Information About the Instances"
@@ -64,37 +67,62 @@ do
                         ;;
 
         2|ListInstancesInDetail)
-                        curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances |tr "," "\n" |grep "id";
-                        echo -e -n "\nNOW CHOOSE ONE OF THE AVAILABLE INSTANCE IDs\n";
-                        read -p "INSTANCE ID " INSTANCEID;
-                        curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances/$INSTANCEID |tr "," "\n" |egrep "hostname|id|name|status|size";
+	if [ "$(echo "$instance_id" | awk '{print $1}')" = '"name":' ]; then
+			curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances |tr "," "\n" |egrep "name|id"
+                        echo -e -n "\nNOW CHOOSE ONE OF THE AVAILABLE INSTANCE IDs\n"
+                        read -p "INSTANCE ID " INSTANCEID
+                        curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances/$INSTANCEID |tr "," "\n" |egrep "hostname|id|name|status|size"
                         source ./databases.sh
                         listings
-                        ;;
+        else 
+		echo "No Instances Found"
+			source ./databases.sh
+			listings
+	fi
+		;;
         3|ListActiveDBs)
-                        curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances |tr "," "\n" |grep "id";
+			if [ "$(echo "$instance_id" | awk '{print $1}')" = '"name":' ]; then
+                        curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances |tr "," "\n" |egrep "name|id";
                         echo -e -n "\nNOW CHOOSE ONE OF THE AVAILABLE INSTANCE IDs\n";
                         read -p "INSTANCE ID " INSTANCEID;
                         curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances/$INSTANCEID/databases |tr "{" "\n";
                         source ./databases.sh
                         listings
-                        ;;
+                        else 
+                echo "No Instances Found"
+                        source ./databases.sh
+                        listings
+        fi
+                ;;
+
        	4|CheckStatusOfRootUser)
-                        curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances |tr "," "\n" |grep  "id";
+			if [ "$(echo "$instance_id" | awk '{print $1}')" = '"name":' ]; then
+                        curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances |tr "," "\n" |egrep  "name|id";
                         read -p "INSTANCE ID " INSTANCEID;
                         curl -s -XGET -H "Content-type: application/json" -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances/$INSTANCEID/root;
                         source ./databases.sh
                         listings
-                        ;;
+                        else
+                echo "No Instances Found"
+                        source ./databases.sh
+                        listings
+        fi
+                ;;
 	5|LISTALLACTIVEUSERSINDATABASEINSTANCE)
-                        curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances |tr "," "\n" |grep "id"
+        if [ "$(echo "$instance_id" | awk '{print $1}')" = '"name":' ]; then          
+	      curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances |tr "," "\n" |egrep "name|id"
                         echo -e -n "\nNOW CHOOSE ONE OF THE AVAILABLE INSTANCE IDs\n\n"
                         read -p "INSTANCE ID " INSTANCEID
                         curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances/$INSTANCEID |tr "," "\n" |grep "name"
                         curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances/$INSTANCEID/users |tr "," "\n" |tr ":" "\t" |tr "[{}]" "\t"
                         source ./databases.sh
                         listings
-                        ;;
+                        else
+                echo "No Instances Found"
+                        source ./databases.sh
+                        listings
+        fi
+                ;;
         15|MAINMENU)
                         echo " PLEASE CHOOSE ONE OF THE FOLLOWING DATABASE INSTANCE OPTIONS: "
                         if [ "./databases.sh" ]; then
@@ -108,7 +136,7 @@ do
       echo        " THANK YOU FOR USING API CLIENT "
       exit
       ;;
-    *) echo "  UNFORTUNATELY THIS IS NOT A VALID ENTRY. CLOSING. GOOD BYE      "
+    *) echo "  UNFORTUNATELY THIS IS NOT A VALID ENTRY. CHOOSE FROM THE AVAILABLE OPTION LIST.      "
   esac
 
 
@@ -147,43 +175,68 @@ do
                                 actions
                         ;;
         2|DeleteDatabaseInstance)
+			if [ "$(echo "$instance_id" | awk '{print $1}')" = '"name":' ]; then
                         curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances |tr "," "\n" |egrep "name|id"
                         echo -e -n "\nNOW CHOOSE ONE OF THE AVAILABLE INSTANCE IDs\n"
                         read -p "INSTANCE ID " INSTANCEID
                         curl -i -s -XDELETE -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances/$INSTANCEID |egrep "HTTP|Date"
                         source ./databases.sh
                         actions
-                        ;;
+                        else
+                echo "No Instances Found"
+                        source ./databases.sh
+                        listings
+        fi
+                ;;
         3|RestartDatabase)
-                        curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances |tr "," "\n" |grep  "id"
+			if [ "$(echo "$instance_id" | awk '{print $1}')" = '"name":' ]; then
+                        curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances |tr "," "\n" |egrep  "name|id"
                         read -p "INSTANCE ID " INSTANCEID
                         source ./restart_instance.sh
                         reboot
                                 curl -s -T - -XPOST -H "Content-type: application/json" -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances/$INSTANCEID/action <<< $reboot
                                 source ./databases.sh
                                 actions
-                        ;;
+                        else
+                echo "No Instances Found"
+                        source ./databases.sh
+                        listings
+        fi
+                ;;
         4|RESIZETHEINSTANCE)
-                                curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances |tr "," "\n" |grep  "id"
+			if [ "$(echo "$instance_id" | awk '{print $1}')" = '"name":' ]; then
+                                curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances |tr "," "\n" |egrep  "name|id"
                                 read -p "INSTANCE ID " INSTANCEID
                                 source ./resize_instance.sh
                                 resizeinstance
                                 curl  -s -T - -XPOST -H "Content-type: application/json" -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances/$INSTANCEID/action <<< $resize
                                 source ./databases.sh
                                 actions
-                        ;;
+                        else
+                echo "No Instances Found"
+                        source ./databases.sh
+                        listings
+        fi
+                ;;
 
         5|RESIZETHEINSTANCEVOLUME)
-                                curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances |tr "," "\n" |grep  "id";
+		if [ "$(echo "$instance_id" | awk '{print $1}')" = '"name":' ]; then                  
+              curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances |tr "," "\n" |egrep  "name|id";
                                 read -p "INSTANCE ID " INSTANCEID;
                                 source ./resize_instance_volume.sh
                                 resizevolume
                                 curl -s -T - -XPOST -H "Content-type: application/json" -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances/$INSTANCEID/action <<< $volumeresize
                                 source ./databases.sh
                                 actions
-                        ;;
+                       else
+                echo "No Instances Found"
+                        source ./databases.sh
+                        listings
+        fi
+                ;;
        	6|LoginToTheDatabase)
-                                curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances |tr "," "\n" |grep  "id";
+		if [ "$(echo "$instance_id" | awk '{print $1}')" = '"name":' ]; then                  
+              curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances |tr "," "\n" |egrep  "name|id";
                                 read -p "INSTANCE ID " INSTANCEID;
                                 curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances/$INSTANCEID/users |tr "," "\n";
                                 curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances/$INSTANCEID |tr "," "\n" |egrep "hostname|id";
@@ -193,10 +246,16 @@ do
                                 mysql -h $HOSTNAME -u$DBUSER $DATABASE -p;
                                 source ./databases.sh
                                 actions
-                                ;;
+                                else
+                echo "No Instances Found"
+                        source ./databases.sh
+                        listings
+        fi
+                ;;
 
         7|CREATEDATABASEONEXISTINGINSTANCE)
-                        curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances |tr "," "\n" |grep "id"
+	      if [ "$(echo "$instance_id" | awk '{print $1}')" = '"name":' ]; then
+		curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances |tr "," "\n" |egrep "name|id"
                         echo -e -n "\nNOW CHOOSE ONE OF THE AVAILABLE INSTANCE IDs\n"
                         read -p "INSTANCE ID " INSTANCEID
                         source ./create_db_existing_instance.sh
@@ -204,9 +263,15 @@ do
                         curl -s -T - -XPOST -H "Content-type: application/json" -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances/$INSTANCEID/databases <<< $newdb |tr "," "\n"
                         source ./databases.sh
                         actions
-                        ;;
+                        else
+                echo "No Instances Found"
+                        source ./databases.sh
+                        listings
+        fi
+                ;;
         8|DELETEDATABASE)
-                        curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances |tr "," "\n" |grep "id";
+		if [ "$(echo "$instance_id" | awk '{print $1}')" = '"name":' ]; then                  
+      curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances |tr "," "\n" |egrep "name|id";
                         echo -e -n "\nNOW CHOOSE ONE OF THE AVAILABLE INSTANCE IDs\n";
                         read -p "INSTANCE ID " INSTANCEID;
                         curl -s -XGET "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances/$INSTANCEID/databases |tr "," "\n" |grep "name";
@@ -216,9 +281,15 @@ do
                         echo -e -n "\nDATABASE SUCCESSFULLY DELETED\n"
                         source ./databases.sh
                         actions
-                        ;;
+                        else
+                echo "No Instances Found"
+                        source ./databases.sh
+                        listings
+        fi
+                ;;
         9|CREATEUSERFORASPECIFICDATABASE)
-                        curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances |tr "," "\n" |grep "id"
+		if [ "$(echo "$instance_id" | awk '{print $1}')" = '"name":' ]; then                  
+      curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances |tr "," "\n" |egrep "name|id"
                         echo -e -n "\nNOW CHOOSE ONE OF THE AVAILABLE INSTANCE IDs\n\n"
                         read -p "INSTANCE ID " INSTANCEID
                         curl -s -XGET "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances/$INSTANCEID/databases |tr "," "\n" |grep "database" |tr "{" "\n" |tr "}]" "\t"
@@ -227,14 +298,26 @@ do
                         curl -s -T - -XPOST -H "Content-type: application/json" -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances/$INSTANCEID/users <<< $createuser |tr "," "\n"
                         source ./databases.sh
                         actions
-                        ;;
+                        else
+                echo "No Instances Found"
+                        source ./databases.sh
+                        listings
+        fi
+                ;;
         10|EnableRootUser)
-                        curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances |tr "," "\n" |grep  "id";
+                  
+		if [ "$(echo "$instance_id" | awk '{print $1}')" = '"name":' ]; then
+      curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances |tr "," "\n" |egrep  "name|id";
                         read -p "INSTANCE ID " INSTANCEID;
                         curl -s -XPOST -H "Content-type: application/json" -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.databases.api.rackspacecloud.com/v1.0/$ACCOUNT/instances/$INSTANCEID/root |python -mjson.tool;
                         source ./databases.sh
                         actions
-                        ;;
+		else
+                echo "No Instances Found"
+                        source ./databases.sh
+                        listings
+        fi
+                ;;
         15|MAINMENU)
                         echo " PLEASE CHOOSE ONE OF THE FOLLOWING DATABASE INSTANCE OPTIONS: "
                         if [ "./databases.sh" ]; then
@@ -248,7 +331,7 @@ do
       echo        " THANK YOU FOR USING API CLIENT "
       exit
       ;;
-    *) echo "  UNFORTUNATELY THIS IS NOT A VALID ENTRY. CLOSING. GOOD BYE      "
+    *) echo "  UNFORTUNATELY THIS IS NOT A VALID ENTRY. CHOOSE FROM THE AVAILABLE OPTION LIST.      "
   esac
 
 done
