@@ -10,13 +10,9 @@ to login to DBaaS MySQL server instance as well. All the MySQL access from elswh
 
 I will be modifying the look and description of the available options so it would be easier to read.
 
-Once downloaded, run ./API_TOOL.sh
+Once downloaded, run ./API_TOOL.sh -u your_username -a your_account -key your_API_key
 
 You will be prompted to enter the following:
-
-USERNAME account_username
-RACKSPACE ACCOUNT NUMBER/DDI account_number
-API KEY (PROVIDED BY RACKSPACE WHEN THE ACCOUNT IS CREATED) api_key
 
 DataCenter Location: 
 1 LON
@@ -33,7 +29,8 @@ CHOOSE ONE OF THE FOLLOWING OPTIONS:
 
 1 DATABASE INSTANCES
 2 MONITORING
-3 EXIT
-
+3 NextGen SERVERS
+4 LOAD BALANCERS
+0 EXIT
 
 
