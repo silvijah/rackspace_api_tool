@@ -1,8 +1,27 @@
 #! /bin/bash
 
-authenticate= read -p "USERNAME " USERNAME; read -p "RACKSPACE ACCOUNT NUMBER/DDI " ACCOUNT; read -p "API KEY (PROVIDED BY RACKSPACE WHEN THE ACCOUNT IS CREATED) " APIKEY;
+USERNAME=
+ACCOUNT=
+APIKEY=
 
-export USERNAME ACCOUNT
+while [ -n "$1" ]; do
+	case $1 in
+		-u)
+			shift
+			USERNAME="$1"
+			;;
+		-a)
+			shift
+			ACCOUNT="$1"
+			;;
+		-key)
+			shift
+			APIKEY="$1"
+			;;
+	esac
+
+	shift
+done
 
 while true;
 do

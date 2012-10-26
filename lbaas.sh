@@ -1,15 +1,17 @@
 #!/bin/bash
 
+network_id="$(curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers/$LBID/accesslist |tr "," "\n" |tr ":" "\t" |egrep "type")"
+
 function loadbalancers()
 {
 
 echo -e -n "\n\n\t1 Load Balancers "
 echo -e -n "\n\t2 Error Page "
 echo -e -n "\n\t3 Nodes "
-echo -e -n "\n\t4 Virtual IPs "
-echo -e -n "\n\t5 Allowed Domains and Access Lists "
-echo -e -n "\n\t7 SSL Termination "
-echo -e -n "\n\t8 Metadata"
+#echo -e -n "\n\t4 Virtual IPs "
+echo -e -n "\n\t4 Access Lists "
+echo -e -n "\n\t5 SSL Termination "
+echo -e -n "\n\t6 Metadata"
 echo -e -n "\n \t---------"
 echo -e -n "\n\t15 Back to Main Menu"
 echo -e -n "\n\t0 Exit\n >>\t"
@@ -31,19 +33,19 @@ do
                         source ./lbaas.sh
                         nodes
                         ;;
-        4|virtualIPs)
+#        4|virtualIPs)
+#                        source ./lbaas.sh
+#                        virtualips
+#                        ;;
+        4|accesslist)
                         source ./lbaas.sh
-                        virtualips
+                        accesslist
                         ;;
-        5|domainsect)
-                        source ./lbaas.sh
-                        domainsadnother
-                        ;;
-        6|ssltermination)
+        5|ssltermination)
                         source ./lbaas.sh
                         ssltermination
                         ;;
-	7|metadata)	source ./lbaas.sh
+	6|metadata)	source ./lbaas.sh
 			metadata
 			;;
         15|MAINMENU)
@@ -64,6 +66,132 @@ echo "CHOOSE ONE OF THE AVAILABLE OPTIONS"
   esac
 
 done
+}
+
+function accesslist()
+
+{
+
+echo -e -n "\n\n\t1 List the Available Access Lists "
+echo -e -n "\n\t2 Create a New Access List "
+echo -e -n "\n\t3 Delete a Network Item "
+echo -e -n "\n\t4 Delete the Entire Access List "
+echo -e -n "\n \t---------"
+echo -e -n "\n\t15 Back to LoadBalancer Menu"
+echo -e -n "\n\t0 Exit\n >>\t"
+
+
+while true
+do
+	read ACCESS
+	case $ACCESS in
+
+	1|List)
+		curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  "https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers" |tr "{[" "\n" |tr "[}" "\n" |tr "," "\n" |egrep "name|id|address";
+                read -p "Choose LoadBalancer ID: " LBID;
+		curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  "https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers/$LBID/accesslist" |tr "{[" "\n" |tr "[}" "\n" |tr "," "\n";
+		source ./lbaas.sh
+		accesslist
+			;;	
+	2|create)
+	curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  "https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers" |tr "{[" "\n" |tr "[}" "\n" |tr "," "\n" |egrep "name|id|address" ;
+                read -p "Choose LoadBalancer ID: " LBID;
+
+	read -p "Specify An IP address: " IPADDR
+
+	echo -e -n "\n\t1 ALLOW "
+	echo -e -n "\n\t2 DENY \n"
+
+	read CONDITION
+	case $CONDITION in
+	
+	1|allow)
+	CONDITION=ALLOW
+	;;
+	2|deny)
+	CONDITION=DENY
+	;;
+	esac
+	
+	curl -s -i -XPOST -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json' -d '{ "accessList": [{ "address": "'$IPADDR'", "type": "'$CONDITION'" }]} ' "https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers/$LBID/accesslist"
+	source ./lbaas.sh
+                accesslist
+	;;
+
+	3|deletenetworkitem)
+
+#network_idi="$(curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers/$LBID/accesslist |tr "," "\n" |tr ":" "\t" |egrep "type")"
+
+	if [ "$(echo "$network_id" | awk '{print $1}')" = '"type"' ]; then
+	curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  "https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers" |tr "{[" "\n" |tr "[}" "\n" |tr "," "\n" |egrep "name|id|address" ;
+                read -p "Choose LoadBalancer ID: " LBID;
+	curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  "https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers/$LBID/accesslist" |tr "{[" "\n" |tr "[}" "\n" |tr "," "\n" |tr ":" "\t"
+		read -p "Choose a NetworkID to Delete: " NETWORKID;
+	curl -s -i -XDELETE -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  "https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers/$LBID/accesslist/$NETWORKID"|egrep "HTTP|Date";
+	source ./lbaas.sh
+                accesslist
+	else echo "No AccessLists Found"
+	source ./lbaas.sh
+                accesslist
+	fi
+	;;
+	4|deleteaccesslist)
+	if [ "$(echo "$network_id" | awk '{print $1}')" = '"type"' ]; then
+        curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  "https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers" |tr "{[" "\n" |tr "[}" "\n" |tr "," "\n" |egrep "name|id|address" ;
+                read -p "Choose LoadBalancer ID: " LBID;
+        curl -s -i -XDELETE -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  "https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers/$LBID/accesslist" |tr "{[" "\n" |tr "[}" "\n" |tr "," "\n" |tr ":" "\t" |egrep "HTTP|Date"
+	source ./lbaas.sh
+                accesslist
+        else echo "No AccessLists Found"
+        source ./lbaas.sh
+                accesslist
+        fi
+
+	;;
+	15|MAINMENU)
+                        echo " PLEASE CHOOSE ONE OF THE FOLLOWING DATABASE INSTANCE OPTIONS: "
+                        if [ "./main_menu.sh" ]; then
+                        source ./lbaas.sh
+                                loadbalancers
+                        else
+echo "CHOOSE ONE OF THE AVAILABLE OPTIONS"
+
+                        fi
+                        ;;
+        0|Exit)
+      echo " THANK YOU FOR USING API CLIENT "
+      exit
+      ;;
+    *) echo " UNFORTUNATELY THIS IS NOT A VALID ENTRY. CLOSING. GOOD BYE "
+  esac
+
+done
+
+}
+
+function other()
+
+{
+echo -e -n "\n\n\t1 Billable Usage Report for the All LoadBalancers "
+echo -e -n "\n\t2 List Account Level Usage "
+echo -e -n "\n\t3 List Historical Usage for A Specific LoadBalancer "
+echo -e -n "\n\t4 List Current LoadBalancer Usage "
+echo -e -n "\n \t\t---------"
+echo -e -n "\n\t\t15 Back to LoadBalancer Menu"
+echo -e -n "\n\t\t0 Exit\n >>"
+
+while true
+do
+	read CONFIRM
+	case $CONFIRM in
+
+
+	1|billable)
+		read -p "The esac "
+
+	esac
+done
+
 }
 
 function nodes()
@@ -268,7 +396,7 @@ do
                         loadbalancerinfo "\t"
                         ;;
 	2|detaillbaas)
-	curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  "https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers" |tr "{[" "\n" |tr "[}" "\n" |tr "," "\n" |egrep "name|id|address" ;
+	curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  "https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers" |tr "{[" "\n" |tr "[}" "\n" |tr "," "\n" |egrep "name|id|address";
 			read -p "Choose LoadBalancer ID: " LBID
 	curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  "https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers/$LBID" |tr "{[" "\n" |tr "[}" "\n" |tr "," "\n";
                         source ./lbaas.sh
@@ -276,24 +404,151 @@ do
 			;;
 	3|createlbaas)
 		read -p "LoadBalancer Name:	" LBAASNAME;
-		curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  "https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers/protocols" |tr "{[" "\t" |tr "[}" "\t" |tr "," "\t\t";
-        	read -p "
-Choose a New Protocol:         " PROTOCOL;
-        	read -p "Choose a new Port:       " PORT;
-		read -p "Which Type of VirtualIP You would Like to Use: PUBLIC/PRIVATE?	" VIRTUALIP;
-		echo  "NextGen Servers	"
-		curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json' https://$LOCATION.servers.api.rackspacecloud.com/v2/$ACCOUNT/servers/detail |tr "{[" "\n" |tr "[}" "\n" |tr "," "\n" |egrep "id|name|addr";
-		echo \n "FirstGen Servers	" \n
+
+	echo -e -n "\n\t1 DNS(TCP) 53"
+	echo -e -n "\n\t2 DNS(UDP) 53"
+	echo -e -n "\n\t3 FTP 21"
+	echo -e -n "\n\t4 HTTP 80"
+	echo -e -n "\n\t5 HTTPS 443"
+	echo -e -n "\n\t6 IMAPS 993"
+	echo -e -n "\n\t7 IMAPv4 143"
+	echo -e -n "\n\t8 LDAP 383"
+	echo -e -n "\n\t9 LDAPS 636"
+	echo -e -n "\n\t10 MYSQL 3306"
+	echo -e -n "\n\t11 POP3 110"
+	echo -e -n "\n\t12 POP3S 995"
+	echo -e -n "\n\t13 SMTP 25"
+	echo -e -n "\n\t14 TCP (custom port)"
+	echo -e -n "\n\t15 TCP_CLIENT_FIRST (custom port)"
+	echo -e -n "\n\t16 UDP (custom port)"
+	echo -e -n "\n\t17 UDP_STREM (custom port)"
+	echo -e -n "\n\t18 SFTP 22"
+	echo -e -n "\n \t------"
+	echo -e -n "\n\t25 Back to LoadBalancers Options Menu"
+	echo -e -n "\n\t0 Exit\n\n\n >>\t"
+
+
+	read PROTOCOLS
+	case $PROTOCOLS in
+
+	1|dnstcp)
+		PROTOCOL='DNS'
+		PORT='53'
+	;;
+	2|DNSUDP)
+		PROTOCOL='DNS'
+		PORT='53'
+	;;
+	3|FTP)
+		PROTOCOL='FTP'
+		PORT='21'
+	;;
+	4|HTTP)
+		PROTOCOL='HTTP'
+		PORT='80'
+	;;
+	5|HTTPS)
+		PROTOCOL='HTTPS'
+		PORT='443'
+	;;
+	6|IMAPS)
+		PROTOCOL='IMAPS'
+		PORT='993'
+	;;
+	7|IMAPV4)
+		PROTOCOL='IMAPv4'
+		PORT='143'
+	;;
+	8|LDAP)
+		PROTOCOL='LDAP'
+		PORT='389'
+	;;
+	9|LDAPS)
+		PROTOCOL='LDAPS'
+		PORT='636'
+	;;
+	10|MYSQL)
+		PROTOCOL='MYSQL'	
+		PORT='3306'
+	;;
+	11|POP3)
+		PROTOCOL='POP3'
+		PORT='110'
+	;;
+	12|POP3S)
+		PROTOCOL='POP3S'	
+		PORT='995'
+	;;
+	13|SMTP)
+		PROTOCOL='SMTP'
+		PORT='25'
+	;;
+	14|TCP)
+		PROTOCOL='TCP'
+		read -p "Specify A Custom Port Number: " PORT
+	;;
+	15|tcp_client_first)
+		PROTOCOL='TCP_CLIENT_FIRST'
+		read -p "Specify A Custom Port Number: " PORT
+	;;
+	16|UDP)
+		PROTOCOL='UDP'
+		read -p "Specify A Custom Port Number: " PORT
+	;;
+	17|udp-stream)
+		PROTOCOL='UDP_STREAM'
+		read -p "Specify A Custom Port Number: " PORT
+	;;
+	18|SFTP)
+		PROTOCOL='SFTP'
+		PORT='22'
+	;;
+	*)
+	echo "Invalid Option. Please choose again."
+        ;;
+
+esac
+
+
+echo -e -n "Which Type of VirtualIP You would Like to Use: PUBLIC/PRIVATE? :
+1) PUBLIC
+2) PRIVATE\n\n>>>\t"
+
+	read VIRTUALIP	
+	case $VIRTUALIP in
+
+	1|PUBLIC)
+		VIRTUALIP='PUBLIC'
+		;;
+	2|PRIVATE)
+		VIRTUALIP='PRIVATE'
+		;;
+	*)
+		echo "Invalid Option. Please choose again."
+        ;;
+esac 
+
+		echo  "
+NEXTGEN SERVERS	
+			"
+
+		curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json' https://$LOCATION.servers.api.rackspacecloud.com/v2/$ACCOUNT/servers/detail |tr "{[" "\n" |tr "[}" "\n" |tr "," "\n" |egrep "id|name|addr" |egrep -v 'rax|bandwidth';
+		echo  "
+FIRSTGEN SERVERS	
+			"
 		curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/xml' -H 'Accept: application/xml' "https://$LOCATION.servers.api.rackspacecloud.com/v1.0/$ACCOUNT/servers/detail" |tr "<" "\n" |tr "/>" "\n" |egrep "name|addr";
 		read -p "Which Node you Would like to add? (Choose private IP of the Server)	" PRIVATEIP ;
 			
-	curl -s -XPOST -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json' -d '{"loadBalancer": { "name": "'$LBAASNAME'", "port": '$PORT', "protocol": "'$PROTOCOL'", "virtualIps": [ { "type": "'$VIRTUALIP'" } ], "nodes": [ { "address": "'$PRIVATEIP'", "port": '$PORT', "condition": "ENABLED" } ] }}' "https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers" |tr "{[" "\n" |tr "[}" "\n" |tr "," "\n";
+		curl -s -XPOST -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json' -d '{"loadBalancer": { "name": "'$LBAASNAME'", "port": '$PORT', "protocol": "'$PROTOCOL'", "virtualIps": [ { "type": "'$VIRTUALIP'" } ], "nodes": [ { "address": "'$PRIVATEIP'", "port": '$PORT', "condition": "ENABLED" } ] }}' "https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers" |tr "{[" "\n" |tr "[}" "\n" |tr "," "\n";
 			source ./lbaas.sh
                         loadbalancerinfo "\t"
                         ;;
 	4|updatelbaas)
-		echo -e -n "Choose an Algorithm:
-1 LEAST_CONNECTIONS  "
+	curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  "https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers" |tr "{[" "\n" |tr "[}" "\n" |tr "," "\n" |egrep "name|id" |tr ":" "\t";
+        read -p "Choose LoadBalancer ID:        " LBID;
+
+		echo -e -n "\n\nChoose an Algorithm:
+\n1 LEAST_CONNECTIONS  "
 		echo -e -n "\n2 RANDOM "
 		echo -e -n "\n3 ROUND_ROBIN "
 		echo -e -n "\n4 WEIGHTED_LEAST_CONNECTIONS "
@@ -393,8 +648,9 @@ esac
 	11|removeipv6)
 	curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  "https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers" |tr "{[" "\n" |tr "[}" "\n" |tr "," "\n" |egrep "name|id|address";
         read -p "Choose LoadBalancer ID (the ID right after the "'name'"):        " LBID;
+	curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  "https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers/$LBID/virtualips" |tr "{[" "\n" |tr "[}" "\n" |tr "," "\n";
 	read -p "Choose a IPV6 VirtualIP ID: " vipid
-	curl -s -XDELETE -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  "https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers/$LBID/virtualips/$vipid" |tr "{[" "\n" |tr "[}" "\n" |tr "," "\n";
+	curl -s -i -XDELETE -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  "https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers/$LBID/virtualips/$vipid" |tr "{[" "\n" |tr "[}" "\n" |tr "," "\n" |egrep "HTTP|Date";
 		source ./lbaas.sh
                 loadbalancerinfo "\t"
                 ;;
@@ -414,7 +670,6 @@ echo "CHOOSE ONE OF THE AVAILABLE OPTIONS"
       ;;
     *) echo " UNFORTUNATELY THIS IS NOT A VALID ENTRY. CLOSING. GOOD BYE "
   esac
-
 done
 
 }
@@ -422,13 +677,121 @@ done
 function algorithms()
 
 {
-	curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  "https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers" |tr "{[" "\n" |tr "[}" "\n" |tr "," "\n" |egrep "name|id";
-        read -p "Choose LoadBalancer ID:	" LBID;
-        read -p "New LoadBalancer Name:	" LBNAME;
-	curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  "https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers/protocols" |tr "{[" "\t" |tr "[}" "\t" |tr "," "\t\t";
-	read -p "Choose a New Protocol: 	" NEWPROTOCOL;
-	read -p "Choose a new Port: 80/443	" PORT;
-	curl -s -i -XPUT -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json' -d '{ "loadBalancer": { "name": "'$LBNAME'", "algorithm": "'$algorithm'", "protocol": "'$NEWPROTOCOL'" } }' "https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers/$LBID" |egrep "HTTP|Date";
+
+        #curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  "https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers" |tr "{[" "\n" |tr "[}" "\n" |tr "," "\n" |egrep "name|id";
+        #read -p "Choose LoadBalancer ID:        " LBID;
+        read -p "New LoadBalancer Name: " LBNAME;
+
+        echo -e -n "\n\t1 DNS(TCP) 53"
+        echo -e -n "\n\t2 DNS(UDP) 53"
+        echo -e -n "\n\t3 FTP 21"
+        echo -e -n "\n\t4 HTTP 80"
+        echo -e -n "\n\t5 HTTPS 443"
+        echo -e -n "\n\t6 IMAPS 993"
+        echo -e -n "\n\t7 IMAPv4 143"
+        echo -e -n "\n\t8 LDAP 383"
+        echo -e -n "\n\t9 LDAPS 636"
+        echo -e -n "\n\t10 MYSQL 3306"
+        echo -e -n "\n\t11 POP3 110"
+        echo -e -n "\n\t12 POP3S 995"
+        echo -e -n "\n\t13 SMTP 25"
+        echo -e -n "\n\t14 TCP (custom port)"
+        echo -e -n "\n\t15 TCP_CLIENT_FIRST (custom port)"
+        echo -e -n "\n\t16 UDP (custom port)"
+        echo -e -n "\n\t17 UDP_STREM (custom port)"
+        echo -e -n "\n\t18 SFTP 22"
+        echo -e -n "\n \t------"
+        echo -e -n "\n\t25 Back to LoadBalancers Options Menu"
+        echo -e -n "\n\t0 Exit\n\n\n >>\t"
+
+
+        read PROTOCOLS
+        case $PROTOCOLS in
+
+        1|dnstcp)
+                PROTOCOL='DNS'
+                PORT='53'
+        ;;
+        2|DNSUDP)
+                PROTOCOL='DNS'
+                PORT='53'
+        ;;
+        3|FTP)
+                PROTOCOL='FTP'
+                PORT='21'
+        ;;
+        4|HTTP)
+                PROTOCOL='HTTP'
+                PORT='80'
+        ;;
+        5|HTTPS)
+                PROTOCOL='HTTPS'
+	;;
+	6|IMAPS)
+                PROTOCOL='IMAPS'
+                PORT='993'
+        ;;
+        7|IMAPV4)
+                PROTOCOL='IMAPv4'
+                PORT='143'
+        ;;
+        8|LDAP)
+                PROTOCOL='LDAP'
+                PORT='389'
+        ;;
+        9|LDAPS)
+                PROTOCOL='LDAPS'
+                PORT='636'
+        ;;
+        10|MYSQL)
+                PROTOCOL='MYSQL'        
+                PORT='3306'
+        ;;
+        11|POP3)
+                PROTOCOL='POP3'
+                PORT='110'
+        ;;
+        12|POP3S)
+                PROTOCOL='POP3S'        
+                PORT='995'
+        ;;
+        13|SMTP)
+                PROTOCOL='SMTP'
+                PORT='25'
+        ;;
+        14|TCP)
+                PROTOCOL='TCP'
+                read -p "Specify A Custom Port Number: " PORT
+        ;;
+        15|tcp_client_first)
+                PROTOCOL='TCP_CLIENT_FIRST'
+                read -p "Specify A Custom Port Number: " PORT
+        ;;
+        16|UDP)
+                PROTOCOL='UDP'
+                read -p "Specify A Custom Port Number: " PORT
+        ;;
+        17|udp-stream)
+                PROTOCOL='UDP_STREAM'
+                read -p "Specify A Custom Port Number: " PORT
+        ;;
+        18|SFTP)
+                PROTOCOL='SFTP'
+                PORT='22'
+        ;;
+        *)
+        echo "Invalid Option. Please choose again."
+        ;;
+
+esac
+
+#	curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  "https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers" |tr "{[" "\n" |tr "[}" "\n" |tr "," "\n" |egrep "name|id";
+#        read -p "Choose LoadBalancer ID:	" LBID;
+#        read -p "New LoadBalancer Name:	" LBNAME;
+#	curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  "https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers/protocols" |tr "{[" "\t" |tr "[}" "\t" |tr "," "\t\t";
+#	read -p "Choose a New Protocol: 	" NEWPROTOCOL;
+#	read -p "Choose a new Port: 80/443	" PORT;
+	curl -s -i -XPUT -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json' -d '{ "loadBalancer": { "name": "'$LBNAME'", "algorithm": "'$algorithm'", "protocol": "'$PROTOCOL'" } }' "https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers/$LBID" |egrep "HTTP|Date";
 	source ./lbaas.sh
                loadbalancerinfo "\t"	
 }

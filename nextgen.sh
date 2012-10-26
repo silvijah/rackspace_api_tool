@@ -93,12 +93,12 @@ do
         case $CONFIRM in
         
         1|allservers)
-                curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://$LOCATION.servers.api.rackspacecloud.com/v2/$ACCOUNT/servers |tr "{[" "\n" |tr "[}" "\n" |tr "," "\n" |grep "id|name";
+                curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://$LOCATION.servers.api.rackspacecloud.com/v2/$ACCOUNT/servers |tr "{[" "\n" |tr "[}" "\n" |tr "," "\n" |egrep 'servers|id|name';
                         source ./nextgen.sh
                         servers "\t"
                         ;;
 	2|detailserver)
-		curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://$LOCATION.servers.api.rackspacecloud.com/v2/$ACCOUNT/servers/detail |tr "{[" "\n" |tr "[}" "\n" |tr "," "\n" |grep -v "servers"
+		curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://$LOCATION.servers.api.rackspacecloud.com/v2/$ACCOUNT/servers/detail |tr "{[" "\n" |tr "[}" "\n" |tr "," "\n" |egrep -v 'href' ;
 			source ./nextgen.sh
 			servers "\t"
 			;;
