@@ -30,7 +30,7 @@ while true; do
                 1|INSTANCES)
                         if [ "./databases.sh" ]; then
                                 source ./databases.sh
-                                instances
+                                databases
                         else
                                 echo "CHOOSE ONE OF THE AVAILABLE OPTIONS"
                         fi
