@@ -173,7 +173,6 @@ do
 				read -p "Please Enter your New Database name " DB1
 				read -p "Please Enter your New Instance name " INSTANCE
 				read -p "Please Enter your New Username " USER
-				read -p "New Password " -s PASS
 				read -p "User Password " -s PASSWORD;
         	                echo -e -n "\n"
                 	        read -p "Confirm the Password " -s PASSWORD2;
