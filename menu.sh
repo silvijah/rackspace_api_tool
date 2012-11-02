@@ -50,7 +50,16 @@ while true; do
                         fi
                         ;;
                 5|LBAAS)
-                        if [ "lbaas.sh" ]; then
+        lbaasinfo="$(curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" -H "Content-Type: application/json" -H "Accept: application/json" "https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers" |tr "{}[]" "\n" |tr "," "\n" |egrep "name" |tr '\"' "\t")"
+
+	if [ "$(echo "$lbaasinfo" | awk '{print $1}' |head -n1)" = 'name' ]; then
+	echo -e -n "\n\nYou Have The Following LoadBalancers Configured: \n\n"
+	lbaas_get /loadbalancers |tr "{[}]" "\n" |tr "," "\n" |egrep "loadBalancers|name|protocol|status" | sed -e 's/"//g' -e 's/\([^:]*\):\(.*\)/\1: \2/g' |tr ":" "\t"
+        else
+        echo -e -n "\nYou do Not have Any LoadBalancers Setup\n\n"
+	fi
+          
+	      if [ "lbaas.sh" ]; then
                                 source ./lbaas.sh
                                 loadbalancers
                         else
