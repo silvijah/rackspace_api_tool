@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<sslTermination xmlns="http://docs.openstack.org/loadbalancers/api/v1.0"
+enabled="true" securePort="443" secureTrafficOnly="false">
+<privatekey>//////////ENTER YOUR KEY HERE/////////</privatekey>
+<certificate>///////// ENTER YOUR CRT HERE////////</certificate>
+<intermediateCertificate>///ENTER YOUR INTERMEDIATE HERE//////</intermediateCertificate>
+</sslTermination>
