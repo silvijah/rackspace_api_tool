@@ -9,7 +9,7 @@ echo -e -n "\n\n1 Information About the Instances"
 echo -e -n "\n2 Actions for the Databases"
 echo -e -n "\n \t---------"
 echo -e -n "\n15 Back to Main Menu"
-echo -e -n "\n0 Exit\n"
+echo -e -n "\n0 Exit\n>>>>\t"
 
 while true
 do
@@ -53,7 +53,7 @@ echo -e -n      "\n\t4 Check ROOT User Status "
 echo -e -n      "\n\t5 List Users for A Specific Database "
 echo -e -n 	"\n\t --------- "
 echo -e -n 	"\n\t15 Back to the  Main Databases MENU "
-echo -e -n	"\n\t0 EXIT \n\n"
+echo -e -n	"\n\t0 EXIT\n>>>>\t"
 
 while true
 do
@@ -159,7 +159,7 @@ echo -e -n      "\n\t10 Enable ROOT User "
 
 echo -e -n	"\n\t	----- "
 echo -e -n      "\n\t15 Back to the  Main Databases MENU "
-echo -e -n	"\n\t0 EXIT \n\n"
+echo -e -n	"\n\t0 EXIT\n>>>>\t"
 
 
 while true

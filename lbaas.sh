@@ -34,14 +34,13 @@ function loadbalancers()
 echo -e -n "\n\n\t1 Load Balancers "
 echo -e -n "\n\t2 Error Page "
 echo -e -n "\n\t3 Nodes "
-#echo -e -n "\n\t4 Virtual IPs "
 echo -e -n "\n\t4 Access Lists "
 echo -e -n "\n\t5 SSL Termination "
-echo -e -n "\n\t6 Metadata"
-echo -e -n "\n\t7 Additional Options "
-echo -e -n "\n \t---------"
-echo -e -n "\n\t15 Back to Main Menu"
-echo -e -n "\n\t0 Exit\n >>\t"
+#echo -e -n "\n\t6 Metadata"
+echo -e -n "\n\t6 Additional Options "
+echo -e -n "\n\t---------"
+echo -e -n "\n\t99 Back to Main Menu"
+echo -e -n "\n\t0 Exit\n>>>>\t"
 
 while true
 do
@@ -65,42 +64,23 @@ do
                         accesslist
                         ;;
         5|ssltermination)
-                        
-			#echo -e -n "\nThis Option Is Coming Soon\n"
-                        #source ./lbaas.sh
-                        #loadbalancers
-                        #;;
 			source ./lbaas.sh
                         ssltermination
                         ;;
-	6|metadata)	
-			echo -e -n "\nThis Option Is Coming Soon\n"
-                        source ./lbaas.sh
-                        loadbalancers
-                        ;;
-
-#			source ./lbaas.sh
-#			metadata
-#			;;
-	7|additional)
+	6|additional)
 			source ./lbaas.sh
 			additional
 			;;
-        15|MAINMENU)
-                        echo " PLEASE CHOOSE ONE OF THE FOLLOWING DATABASE INSTANCE OPTIONS: "
-                        if [ "./main_menu.sh" ]; then
+        99|MAINMENU)
+                        echo " Please Choose One of the Availble Options "
 			source ./main_menu.sh
                                 main_menu
-                        else
-echo "CHOOSE ONE OF THE AVAILABLE OPTIONS"
-
-                        fi
                         ;;
         0|Exit)
       echo " THANK YOU FOR USING API CLIENT "
       exit
       ;;
-    *) echo " UNFORTUNATELY THIS IS NOT A VALID ENTRY. CLOSING. GOOD BYE "
+    *) echo " Please Choose One of the Available Options "
   esac
 
 done
@@ -125,11 +105,11 @@ Your LoadBalancer Does not Support SSL Termination
                 loadbalancers
 	else
 
-echo -e -n "\n\n\t1 Check SSL Termination Status
-\t2 Edit SSL Termination (Certificate)
-\t3 Disable SSL Termination 
-\t---------------
-\t15 Main SSL Certificate Menu\n>>>>\t"
+echo -e -n "\n\n\t\t1 Check SSL Termination Status
+\t\t2 Edit SSL Termination (Certificate)
+\t\t3 Disable SSL Termination 
+\t\t---------------
+\t\t99 Main SSL Certificate Menu\n>>>>\t"
 	
 	 read ALLOWEDSSL
          case $ALLOWEDSSL in
@@ -141,23 +121,155 @@ echo -e -n "\n\n\t1 Check SSL Termination Status
 		loadbalancers
 		;;
 	2|edit)
-	#	list_lbaas 
-	#	curl -s -XPUT -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN"  https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers/$LBID/ssltermination |tr '\"' "\t"
-                source ./lbaas.sh
-                ssltermination
-		;;
-	3|delete)
-		list_lbaas
-		curl -s -XDELETE -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers/$LBID/ssltermination
+	
+echo -e -n "\n\n\t\t\t1 Enable SSL Termination (Requires SSL Certificate)
+\t\t\t2 Edit SSL Termination Options
+\t\t\t--------------------------
+\t\t\t99 Main LoadBalancer Menu\n>>>>\t"
+
+                read EDITLOADBALANCERSSL
+		case $EDITLOADBALANCERSSL in
+
+		1|allow)
+			read -p "What is the Editor you use: " EDITOR
+			cp sslterminationxml sslterminationxml-tmp
+			$EDITOR sslterminationxml-tmp	
+		curl -s -T sslterminationxml -XPUT -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" -H "Content-type: application/xml" https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers/$LBID/ssltermination	
+		rm -rf sslterminationxml-tmp
 		source ./lbaas.sh
-                ssltermination
+                loadbalancers
+		;;
+		2|editoptions)
+echo -e -n "\n\n\t\t\t////////////////////////////////////////////////////
+\t\t\t\t Optional SSL Atributes (When SSL Is Enabled)
+\t\t\t--------------------------------------------
+\t\t\tOptional SSL Attributes 		Non-SSL Traffic 	SSL Traffic
+\t\t\tenabled = true (default) 			Yes 			Yes
+\t\t\t------------------------------------
+\t\t\tenabled = false 				Yes 			No
+\t\t\t------------------------------------
+\t\t\tsecureTrafficOnly = true 			No 			Yes
+\t\t\t------------------------------------
+\t\t\tsecureTrafficOnly = false (default) 	Yes 			Yes
+\t\t\t------------------------------------
+\t\t\tenabled = true
+\t\t\tsecureTrafficOnly = true			No 			Yes
+\t\t\t------------------------------------
+\t\t\tenabled = true
+\t\t\tsecureTrafficOnly = false			Yes 			Yes
+\t\t\t------------------------------------
+\t\t\tenabled = false
+\t\t\tsecureTrafficOnly = false			Yes 			No
+\t\t\t------------------------------------
+\t\t\tenabled = false
+\t\t\tsecureTrafficOnly = true			Yes 			No
+\t\t\t//////////////////////////////////////////////////////////////"
+        
+                source ./lbaas.sh
+                variablechange
                 ;;
-        15|menu)
+		99|menu)
+		source ./lbaas.sh
+		loadbalancers
+		;;
+	*) echo "Choose One of the Available Options"
+	esac
+	;;
+	3|delete)
+		curl -s -i -XDELETE -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers/$LBID/ssltermination
+		source ./lbaas.sh
+                loadbalancers
+                ;;
+        99|menu)
                 source ./lbaas.sh
                 loadbalancers
+		;;
+	*) echo "Choose One Of the Available Options"
 	esac
 
 	fi
+
+}
+
+function variablechange()
+
+{
+
+echo -e -n "\n\n\t\t\t1 enabled = true,
+\t\t\t2 enabled = false
+\t\t\t3 secureTrafficOnly = true
+\t\t\t4 secureTrafficOnly = false
+\t\t\t5 enabled = true, secureTrafficOnly = true
+\t\t\t6 enabled = true, secureTrafficOnly = false
+\t\t\t7 enabled = false, secureTrafficOnly = false
+\t\t\t8 enabled = false, secureTrafficOnly = true
+\t\t\t-----------------
+\t\t\t99 Back To Main LoadBalancer Menu\n>>>>\t"
+
+while true
+do
+        read SSLOPTIONS
+        case $SSLOPTIONS in
+
+        1|true)
+        ENABLED="true"
+        curl -s -XPUT -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" -H "Content-type: application/json" -d '{ "enabled": '"$ENABLED"', "securePort": 443 }'  https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers/$LBID/ssltermination |tr ":" "\t" |tr '\"' "\t" |tr "{," "\n" |egrep -v "certificate|privatekey" |tr "}" "\0"
+                source ./lbaas.sh
+                loadbalancers
+        ;;
+        2|false)
+        ENABLED="false"
+        curl -s -XPUT -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" -H "Content-type: application/json" -d '{ "enabled": '"$ENABLED"', "securePort": 443 }'  https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers/$LBID/ssltermination |tr ":" "\t" |tr '\"' "\t" |tr "{," "\n" |egrep -v "certificate|privatekey" |tr "}" "\0"
+                source ./lbaas.sh
+                loadbalancers
+        ;;
+        3|secure)
+        TRUE="true"
+        curl -s -XPUT -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" -H "Content-type: application/json" -d '{ "securePort": 443, "secureTrafficOnly": '"$TRUE"' }'  https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers/$LBID/ssltermination |tr ":" "\t" |tr '\"' "\t" |tr "{," "\n" |egrep -v "certificate|privatekey" |tr "}" "\0"
+                source ./lbaas.sh
+                loadbalancers
+        ;;
+        4|secure)
+        TRUE="false"
+        curl -s -XPUT -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" -H "Content-type: application/json" -d '{ "securePort": 443, "secureTrafficOnly": '"$TRUE"' }'  https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers/$LBID/ssltermination |tr ":" "\t" |tr '\"' "\t" |tr "{," "\n" |egrep -v "certificate|privatekey" |tr "}" "\0"
+                source ./lbaas.sh
+                loadbalancers
+        ;;
+        5|truetrue)
+        ENABLED="true";
+        TRUE="true"
+        curl -s -XPUT -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" -H "Content-type: application/json" -d '{ "enabled": '"$ENABLED"', "securePort": 443, "secureTrafficOnly": '"$TRUE"' }'  https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers/$LBID/ssltermination |tr ":" "\t" |tr '\"' "\t" |tr "{," "\n" |egrep -v "certificate|privatekey" |tr "}" "\0"
+                source ./lbaas.sh
+                loadbalancers
+        ;;
+        6|truefalse)
+        ENABLED="true";
+        TRUE="false"
+        curl -s -XPUT -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" -H "Content-type: application/json" -d '{ "enabled": '"$ENABLED"', "securePort": 443, "secureTrafficOnly": '"$TRUE"' }'  https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers/$LBID/ssltermination |tr ":" "\t" |tr '\"' "\t" |tr "{," "\n" |egrep -v "certificate|privatekey" |tr "}" "\0"
+                source ./lbaas.sh
+                loadbalancers
+        ;;
+        7|falsefalse)
+        ENABLED="false";
+        TRUE="false"
+        curl -s -XPUT -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" -H "Content-type: application/json" -d '{ "enabled": '"$ENABLED"', "securePort": 443, "secureTrafficOnly": '"$TRUE"' }'  https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers/$LBID/ssltermination |tr ":" "\t" |tr '\"' "\t" |tr "{," "\n" |egrep -v "certificate|privatekey" |tr "}" "\0"
+                source ./lbaas.sh
+                loadbalancers
+        ;;
+        8|falsetrue)
+        ENABLED="false";
+        TRUE="true"
+        curl -s -XPUT -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" -H "Content-type: application/json" -d '{ "enabled": '"$ENABLED"', "securePort": 443, "secureTrafficOnly": '"$TRUE"' }'  https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers/$LBID/ssltermination |tr ":" "\t" |tr '\"' "\t" |tr "{," "\n" |egrep -v "certificate|privatekey" |tr "}" "\0"
+                source ./lbaas.sh
+                loadbalancers
+        ;;
+        99|menu)
+        source ./lbaas.sh
+                loadbalancers
+        ;;
+        *) echo "Choose One of the Available Options"
+        esac
+done
 
 }
 
@@ -165,15 +277,16 @@ function additional()
 
 {
 
-echo -e -n "\n\t1 Health Monitor Status "
-echo -e -n "\n\t2 Session Status "
-echo -e -n "\n\t3 Connection Information "
-echo -e -n "\n\t4 Content Caching "
-echo -e -n "\n\t5 List Ports & Protocols "
-echo -e -n "\n\t6 List All LoadBalancer Algorithms "
-echo -e -n "\n \t---------"
-echo -e -n "\n\t15 Back to LoadBalancer Menu "
-echo -e -n "\n\t0 Exit\n >>>\t"
+echo -e -n "\n\t\t1 Health Monitor Status "
+echo -e -n "\n\t\t2 Session Status "
+echo -e -n "\n\t\t3 Connection Information "
+echo -e -n "\n\t\t4 Content Caching "
+echo -e -n "\n\t\t5 List Ports and Protocols "
+echo -e -n "\n\t\t6 List All LoadBalancer Algorithms "
+echo -e -n "\n\t\t7 Metadata "
+echo -e -n "\n \t\t---------"
+echo -e -n "\n\t\t99 Back to LoadBalancer Menu "
+echo -e -n "\n\t\t0 Exit\n>>>>\t"
 
 while true
 do
@@ -186,9 +299,9 @@ do
 health_monitor="$(curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers/$LBID/healthmonitor |tr "," "\n" |tr ":" "\t" |grep "type" |tr "{" "\0")"
 		if [ "$(echo "$health_monitor" | awk '{print $2}')" = '"type"' ]; then
 			
-			echo -e -n "\n\n\t1 List Health Monitor "
-			echo -e -n "\n\t2 Configure Health Monitor "
-			echo -e -n "\n\t3 Delete Health Monitor \n"
+			echo -e -n "\n\n\t\t\t1 List Health Monitor "
+			echo -e -n "\n\t\t\t2 Configure Health Monitor "
+			echo -e -n "\n\t\t\t3 Delete Health Monitor \n"
 
 		read CONFIGURE
 		case $CONFIGURE in
@@ -244,14 +357,13 @@ health_monitor="$(curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $A
         	        source ./lbaas.sh
                 	additional
                         ;;
+			*) echo "Choose One of The Available Options"
 				esac
 			else
-			echo -e -n "\n\nYou do not Have Health Monitors Setup \n"
-		
-			
-			echo -e -n "\n\n\t1 Setup The Monitor "
-			echo -e -n "\n\t-------- "
-			echo -e -n "\n\t15 Back to LoadBalancer Menu"
+			echo -e -n "\n\n\t\tYou do not Have Health Monitors Setup \n"
+			echo -e -n "\n\n\t\t1 Setup The Monitor "
+			echo -e -n "\n\t\t-------- "
+			echo -e -n "\n\t\t99 Back to LoadBalancer Menu\n>>>>\t"
 		
 		read NOMONITORS
 		case $NOMONITORS in
@@ -261,7 +373,7 @@ health_monitor="$(curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $A
 		source ./lbaas.sh
                         nohealth
 			;;
-		15|MAINMENU)
+		99|MAINMENU)
 			source ./lbaas.sh
                                 loadbalancers
 			;;
@@ -279,7 +391,7 @@ health_monitor="$(curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $A
 			echo -e -n "\n\t2 Edit Session Persistence "
 			echo -e -n "\n\t3 Delete Session Persistence "
 			echo -e -n "\n\t-------- "
-                        echo -e -n "\n\t15 Back to LoadBalancer Menu\n>>>>\t"
+                        echo -e -n "\n\t99 Back to LoadBalancer Menu\n>>>>\t"
 		algorithms
 		
 			read SESSION
@@ -305,7 +417,7 @@ health_monitor="$(curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $A
 
 			echo -e -n "\n\n\t1 Enable Session Persistence "
 			echo -e -n "\n\t-------- "
-                        echo -e -n "\n\t15 Back to Additional Options Menu"
+                        echo -e -n "\n\t99 Back to Additional Options Menu\n>>>>\t"
 
 				read NOSESSION
 				case $NOSESSION in
@@ -317,7 +429,7 @@ health_monitor="$(curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $A
                         source ./lbaas.sh
                                 additional
 				;;
-				15|menu)
+				99|menu)
 				source ./lbaas.sh
 				additional
 				;;
@@ -330,10 +442,10 @@ health_monitor="$(curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $A
 connection="$(curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json' https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers/$LBID/connectionlogging |tr "{}" "\n" |tr '\"' "\t" |egrep "true" |tr ":" "\0")"	
 		if [ "$(echo "$connection" | awk '{print $2}')" = 'true' ]; then
 			
-			echo -e -n "\n\n\t You Have Connection Logging Enabled "
-			echo -e -n "\n\t1 Disable Connection Logging \n"
-			echo -e -n "\n\t-------- "
-                        echo -e -n "\n\t15 Back to Additional Options Menu\n>>>>\t"
+			echo -e -n "\n\n\t\t\t You Have Connection Logging Enabled "
+			echo -e -n "\n\t\t\t1 Disable Connection Logging \n"
+			echo -e -n "\n\t\t\t-------- "
+                        echo -e -n "\n\t\t\t99 Back to Additional Options Menu\n>>>>\t"
 
 			read CONNECTION
 			case $CONNECTION in
@@ -343,7 +455,7 @@ connection="$(curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITO
 				source ./lbaas.sh
 				additional
 				;;
-				15|menu)
+				99|menu)
                                 source ./lbaas.sh
                                 additional
 				;;
@@ -351,10 +463,10 @@ connection="$(curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITO
                             
 			esac
 		else
-			echo -e -n "\n\n\t Your Connection Logging is Disabled \n"
-			echo -e -n "\n\t1 Enable Connection Logging \n"
-                        echo -e -n "\n\t-------- "
-                        echo -e -n "\n\t15 Back to Additional Options Menu\n"
+			echo -e -n "\n\n\t\t\t Your Connection Logging is Disabled \n"
+			echo -e -n "\n\t\t\t1 Enable Connection Logging \n"
+                        echo -e -n "\n\t\t\t-------- "
+                        echo -e -n "\n\t\t\t99 Back to Additional Options Menu\n>>>>\t"
 
 		
 		read CONNECTIONYES
@@ -365,7 +477,7 @@ connection="$(curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITO
                                 source ./lbaas.sh
                                 additional
                                 ;;
-                                15|menu)
+                                99|menu)
                                 source ./lbaas.sh
                                 additional
 				;;
@@ -377,10 +489,12 @@ connection="$(curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITO
 		list_lbaas
 caching="$(curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json' https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers/$LBID/contentcaching |tr "{}" "\n" |tr '\"' "\t" |egrep enabled |tr ":" "\0")"
 		if [ "$(echo "$caching" |awk '{print $2}')" = 'true' ]; then	
-echo -e -n "\n\nYour Content Caching Is Enabled
-\t1 Disable Content Caching
-\t------------
-\t15 Cancel Disable Content Caching & Return to Additional Options Menu\n\n>>>>\t"
+echo -e -n "\n\t\t\t/////////////////////////////////
+\t\t\tYour Content Caching Is Enabled
+\t\t\t////////////////////////////////////
+\t\t\t1 Disable Content Caching
+\t\t\t------------
+\t\t\t99 Cancel Disable Content Caching & Return to Additional Options Menu\n>>>>\t"
 
 			read DISABLECACHE
 			case $DISABLECACHE in
@@ -391,7 +505,7 @@ echo -e -n "\n\nYour Content Caching Is Enabled
                         source ./lbaas.sh
                         additional
 			;;
-		15|menu)
+		99|menu)
 			source ./lbaas.sh
 			additional
 			;;
@@ -401,7 +515,7 @@ echo -e -n "\n\nYour Content Caching Is Enabled
 echo -e -n "\n\nYour Content Caching Is Disabled
 \t1 Enable Content Caching
 \t------------
-\t15 Cancel Disable Content Caching & Return to Additional Options Menu\n\n>>>>\t"
+\t99 Cancel Disable Content Caching & Return to Additional Options Menu\n>>>>\t"
 
 			read ENABLECACHE
 			case $ENABLECACHE in
@@ -411,7 +525,7 @@ echo -e -n "\n\nYour Content Caching Is Disabled
                                 source ./lbaas.sh
                                 additional
                                 ;;
-                15|menu)
+                99|menu)
                         source ./lbaas.sh
                         additional
                         ;;
@@ -431,7 +545,134 @@ echo -e -n "\n\nYour Content Caching Is Disabled
                 source ./lbaas.sh
                         additional
 		;;
-	15|MAINMENU)
+	7|metadata)
+echo -e -n "\n\n\t\t\t1 List Metadata
+\t\t\t2 Add Metadata
+\t\t\t3 Modify Metadata
+\t\t\t4 Delete Metadata
+\t\t\t----------
+\t\t\t99 Return to Additional Options Menu\n>>>>\t"
+
+while true
+do
+	read METADATA
+	case $METADATA in
+		
+		1|list)
+list_lbaas
+			echo -e -n "\n\n\t\t\t1 List All LoadBalancer Metadata
+\t\t\t2 List Specific Metadata of A LoadBalancer
+\t\t\t3 List all metadata associated with the specified node and LoadBalancer
+\t\t\t4 List details for a specific metadata item for the specified node and LoadBalancer
+\t\t\t-----------------
+\t\t\t99 Main Additional Options Menu\n>>>>\t"
+
+			read METADATALIST
+			case $METADATALIST in
+			1|listall)
+				lbaas_get /loadbalancers/$LBID/metadata |tr "{}[]," "\n" |tr ":" "\t" 
+				source ./lbaas.sh
+				additional			
+			;;
+			2|listspecific)
+				lbaas_get /loadbalancers/$LBID/metadata |tr "{}[]," "\n" |tr ":" "\t"
+				read -p "Metadata ID: " METAID
+                        	lbaas_get /loadbalancers/$LBID/metadata/$METAID |tr "{}[]," "\n" |tr ":" "\t"
+				source ./lbaas.sh
+                        	additional
+                        ;;
+			3|nodemeta)
+                        lbaas_get /loadbalancers/$LBID/nodes |tr "{}[]," "\n" |tr ":" "\t"
+			read -p "Node ID: " NODEMETAID
+			lbaas_get /loadbalancers/$LBID/nodes/$NODEMETAID/metadata |tr "{}[]," "\n" |tr ":" "\t"
+			source ./lbaas.sh
+                        additional
+                        ;;
+			4|alldetails)
+                        lbaas_get /loadbalancers/$LBID/nodes |tr "{}[]," "\n" |tr ":" "\t"
+                        read -p "Node ID: " NODEMETAID
+                        lbaas_get /loadbalancers/$LBID/nodes/$NODEMETAID/metadata |tr "{}[]," "\n" |tr ":" "\t"
+			read -p "MetaData ID: " ALLMETAID
+			lbaas_get /loadbalancers/$LBID/nodes/$NODEMETAID/metadata/$ALLMETAID |tr "{}[]," "\n" |tr ":" "\t"
+			source ./lbaas.sh
+                        additional
+                        ;;
+			esac
+		;;
+		2|add)
+	list_lbaas
+echo -e -n "\n\n\t\t\t1 Add New Metadata for A LoadBalancer
+\t\t\t2 Add New Metadata for A LoadBalancer Node
+\t\t\t---------------
+\t\t\t99 Return To Additional Options Menu\n\n>>>>\t"
+
+		read ADDMETADATA
+		case $ADDMETADATA in
+	
+			1|addnew)
+			read -p "Your Metadata Name: " METADATANAME
+			read -p "Your Metadata Item's Name: " METADATAITEMNAME
+			curl -s -i -XPOST -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" -H "Content-Type: application/json" -H "Accept: application/json" -d '{ "metadata": [{ "key":"'$METADATANAME'", "value":"'$METADATAITEMNAME'" }] }' https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/${ACCOUNT}/loadbalancers/$LBID/metadata
+			source ./lbaas.sh
+                        additional
+		;;
+			2|addnewnode)
+			lbaas_get /loadbalancers/$LBID/nodes |tr "{}[]," "\n" |tr ":" "\t"
+			read -p "Choose A Node ID: " METADATANODEID
+			read -p "Your Metadata Name: " METADATANAME
+                        read -p "Your Metadata Item's Name: " METADATAITEMNAME
+                        curl -s -i -XPOST -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" -H "Content-Type: application/json" -H "Accept: application/json" -d '{ "metadata": [{ "key":"'$METADATANAME'", "value":"'$METADATAITEMNAME'" }] }' https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/${ACCOUNT}/loadbalancers/$LBID/nodes/$METADATANODEID/metadata |tr "{}[]," "\n" |tr ":" "\t"
+			source ./lbaas.sh
+                        additional
+		esac
+		;;
+	3|modify)
+	list_lbaas
+echo -e -n "\n\n\t\t\t1 Modify Metadata for A LoadBalancer
+\t\t\t2 Modify Metadata for A LoadBalancer Node
+\t\t\t---------------
+\t\t\t99 Return To Additional Options Menu\n\n>>>>\t"
+
+	read MODIFYMETADATA
+		case $MODIFYMETADATA in
+
+		1|modifyloadbalancer)
+			lbaas_get /loadbalancers/$LBID/metadata |tr "{}[]," "\n" |tr ":" "\t"
+                                read -p "Metadata ID: " METAID
+				read -p "New MetaData Value: " METAVALUENEW
+			curl -s -i -XPUT -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" -H "Content-Type: application/json" -H "Accept: application/json" -d '{ "meta": { "value":"'$METAVALUENEW'" } }' https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/${ACCOUNT}/loadbalancers/$LBID/metadata/$METAID |tr "{}[]," "\n" |tr ":" "\t"
+			source ./lbaas.sh
+                        additional
+			;;
+		2|modifynode)
+			lbaas_get /loadbalancers/$LBID/nodes |tr "{}[]," "\n" |tr ":" "\t"
+                        read -p "Choose A Node ID: " METADATANODEID
+			lbaas_get /loadbalancers/$LBID/nodes/$METADATANODEID/metadata |tr "{}[]," "\n" |tr ":" "\t"
+                        read -p "Metadata ID: " METAID
+			read -p "New Node Metadata Value: " NEWMETADATANODEVALUE
+			curl -s -i -XPUT -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" -H "Content-Type: application/json" -H "Accept: application/json" -d '{ "meta": { "value":"'$NEWMETADATANODEVALUE'" } }' https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/${ACCOUNT}/loadbalancers/$LBID/nodes/$METADATANODEID/metadata/$METAID |tr "{}[]," "\n" |tr ":" "\t"
+                        source ./lbaas.sh
+                        additional
+			;;
+		99|menu)
+		source ./lbaas.sh
+                        additional
+		esac
+		;;
+	4|deletemetadata)
+
+		source ./lbaas.sh
+                        additional
+		;;
+		99|menu)
+		source ./lbaas.sh
+			additional
+		;;
+		*) echo "Choose One of the Available Options"
+		esac	
+	done
+;;
+	99|MAINMENU)
                         echo " PLEASE CHOOSE ONE OF THE FOLLOWING DATABASE INSTANCE OPTIONS: "
                         if [ "./main_menu.sh" ]; then
                         source ./lbaas.sh
@@ -509,8 +750,8 @@ echo -e -n "\n\t2 Create a New Access List "
 echo -e -n "\n\t3 Delete a Network Item "
 echo -e -n "\n\t4 Delete the Entire Access List "
 echo -e -n "\n \t---------"
-echo -e -n "\n\t15 Back to LoadBalancer Menu"
-echo -e -n "\n\t0 Exit\n >>\t"
+echo -e -n "\n\t99 Back to LoadBalancer Menu"
+echo -e -n "\n\t0 Exit\n>>>>\t"
 
 
 
@@ -577,7 +818,7 @@ do
 
 network_id="$(curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers/$LBID/accesslist |tr "," "\n" |tr ":" "\t" |egrep "type")"
 	;;
-	15|MAINMENU)
+	99|MAINMENU)
                         echo " PLEASE CHOOSE ONE OF THE FOLLOWING DATABASE INSTANCE OPTIONS: "
                         if [ "./main_menu.sh" ]; then
                         source ./lbaas.sh
@@ -606,8 +847,8 @@ echo -e -n "\n\t2 List Account Level Usage "
 echo -e -n "\n\t3 List Historical Usage for A Specific LoadBalancer "
 echo -e -n "\n\t4 List Current LoadBalancer Usage "
 echo -e -n "\n \t\t---------"
-echo -e -n "\n\t\t15 Back to LoadBalancer Menu"
-echo -e -n "\n\t\t0 Exit\n >>"
+echo -e -n "\n\t\t99 Back to LoadBalancer Menu"
+echo -e -n "\n\t\t0 Exit\>>>>\t"
 
 while true
 do
@@ -633,8 +874,8 @@ echo -e -n "\n\t\t3 Add Nodes "
 echo -e -n "\n\t\t4 Edit Nodes "
 echo -e -n "\n\t\t5 Delete Nodes "
 echo -e -n "\n \t\t---------"
-echo -e -n "\n\t\t15 Back to LoadBalancer Menu"
-echo -e -n "\n\t\t0 Exit\n >>"
+echo -e -n "\n\t\t99 Back to LoadBalancer Menu"
+echo -e -n "\n\t\t0 Exit\n>>>>\t"
 
 while true
 do
@@ -675,7 +916,7 @@ do
 		echo -e -n "\n\t2 Disabled "
 		echo -e -n "\n\t3 Draining "
 		echo -e -n "\n\t---------- "
-		echo -e -n "\n\t15 Cancel Add Node & Return to Main Nodes Menu\n\n>>>>\t"
+		echo -e -n "\n\t99 Cancel Add Node & Return to Main Nodes Menu\n>>>>\t"
 while true
 do
 	read CONFIRM
@@ -699,7 +940,7 @@ do
 		source ./lbaas.sh
                 nodes "\t"
 		;;		
-	15|menu)
+	99|menu)
 		source ./lbaas.sh
 		nodes
 	esac
@@ -714,7 +955,7 @@ done
 echo -e -n "please select your option:
 1) enabled 
 2) disabled 
-3) draining\n\n>>>\t"
+3) draining\n\n>>>>\t"
 
 read condition
 
@@ -722,7 +963,7 @@ echo -e -n "Please Select your Type of a Server:
 1 primary
 2 secondary
 ----------
-15 Return To Main Nodes Menu\n>>>>\t"
+99 Return To Main Nodes Menu\n>>>>\t"
 
 read type1
 
@@ -748,7 +989,7 @@ case $type1 in
         2)
         type1=SECONDARY
         ;;
-	15|menu)
+	99|menu)
 	source ./lbaas.sh
 	nodes
 	;;
@@ -785,7 +1026,7 @@ esac
 		source ./lbaas.sh
                 nodes "\t"
                 ;;
-	15|MAINMENU)
+	99|MAINMENU)
                         echo " PLEASE CHOOSE ONE OF THE FOLLOWING DATABASE INSTANCE OPTIONS: "
                         if [ "./main_menu.sh" ]; then
                         source ./lbaas.sh
@@ -820,8 +1061,8 @@ echo -e -n "\n\t7 Allowed Domains"
 echo -e -n "\n\t8 Add IPv6 VirtualIP"
 echo -e -n "\n\t9 Remove an IPv6 IP address"
 echo -e -n "\n \t------"
-echo -e -n "\n\t15 Back to LoadBalancers Options Menu"
-echo -e -n "\n\t0 Exit\n\n\n >>\t"
+echo -e -n "\n\t99 Back to LoadBalancers Options Menu"
+echo -e -n "\n\t0 Exit\n\n\n>>>>\t"
 
 while true
 do
@@ -860,8 +1101,8 @@ do
 	echo -e -n "\n\t17 UDP_STREM (custom port)"
 	echo -e -n "\n\t18 SFTP 22"
 	echo -e -n "\n \t------"
-	echo -e -n "\n\t25 Cancel Create Load Balancer & Back to LoadBalancer Options Menu"
-	echo -e -n "\n\t0 Exit\n\n\n >>\t"
+	echo -e -n "\n\t99 Cancel Create Load Balancer & Back to LoadBalancer Options Menu"
+	echo -e -n "\n\t0 Exit\n\n\n>>>>\t"
 
 
 	read PROTOCOLS
@@ -939,7 +1180,7 @@ do
 		PROTOCOL='SFTP'
 		PORT='22'
 	;;
-	25|exit)
+	99|menu)
 		source ./lbaas.sh
 		loadbalancerinfo
 	;;
@@ -952,7 +1193,7 @@ esac
 
 	echo -e -n "Which Type of VirtualIP You would Like to Use: PUBLIC/PRIVATE? :
 		1) PUBLIC
-		2) PRIVATE\n\n>>>\t"
+		2) PRIVATE\n\n>>>>\t"
 
 	read VIRTUALIP	
 	case $VIRTUALIP in
@@ -989,7 +1230,7 @@ esac
 		4 Weighted_Least_Connections 
 		5 Weighted_Round_Robin 
 		\t-----------
-		15 Cancel Update & Back to LoadBalancer Menu \n>>>\t"
+		99 Cancel Update & Back to LoadBalancer Menu\n>>>>\t"
 while true
 do
 
@@ -1021,7 +1262,7 @@ do
 		source ./lbaas.sh
                 algorithms "\t"
 		;;
-		15|exit)
+		99|exit)
 		source ./lbaas.sh
 		loadbalancerinfo
 esac
@@ -1032,7 +1273,7 @@ done
 		
 	4|deletelbaas)
 	echo -e -n "\n\n\t1 Choose A LoadBalancer to Delete "
-        echo -e -n "\n\t15 Cancel Delete LoadBalancer & Back to the LoadBalancer Options Menu\n"
+        echo -e -n "\n\t99 Cancel Delete LoadBalancer & Back to the LoadBalancer Options Menu\n>>>>\t"
 
 while true
 do
@@ -1046,7 +1287,7 @@ do
         source ./lbaas.sh
                 loadbalancerinfo "\t"
 		;;
-        15|exit)
+        99|exit)
                 source ./lbaas.sh
                 loadbalancerinfo
         esac
@@ -1075,7 +1316,7 @@ done
 echo -e -n "Choose The type of VirtualIP to add:
 \n1\tPUBLIC
 2\tSERVICENET\n
-15\n\tCancel Additional IP and Go Back to LoadBalancer Menu \n>>>\t"
+99\n\tCancel Additional IP and Go Back to LoadBalancer Menu \n>>>>\t"
 
 read type1
 
@@ -1084,7 +1325,7 @@ case $type1 in
 	;;
 	2)ipVersion=SERVICENET
 	;;
-	15|exit)
+	99|exit)
 	source ./lbaas.sh
 	loadbalancerinfo
 	;;
@@ -1108,7 +1349,7 @@ esac
 		source ./lbaas.sh
                 loadbalancerinfo "\t"
                 ;;
-        15|MAINMENU)
+        99|MAINMENU)
                         echo " PLEASE CHOOSE ONE OF THE FOLLOWING DATABASE INSTANCE OPTIONS: "
                         if [ "./lbaas.sh" ]; then
 			source ./lbaas.sh
@@ -1135,7 +1376,7 @@ function algorithms()
 	echo -e -n "\n\n1 Change LoadBalancer Name
 2 Keep LoadBalancer Name the Same
 	\t -------
-15 Cancel LoadBalancer Edit & Return to LoadBalancer Menu\n\n"
+99 Cancel LoadBalancer Edit & Return to LoadBalancer Menu\n>>>>\t"
 
 	read LBNAME
 	case $LBNAME in
@@ -1155,7 +1396,7 @@ function algorithms()
         source ./lbaas.sh
                loadbalancerinfo "\t"
 		;;
-	15|menu)
+	99|menu)
 		source ./lbaas.sh
 		loadbalancerinfo "\t"
 		;;
@@ -1186,8 +1427,8 @@ function lbaasname()
         echo -e -n "\n\t17 UDP_STREM (custom port)"
         echo -e -n "\n\t18 SFTP 22"
         echo -e -n "\n \t------"
-        echo -e -n "\n\t25 Back to LoadBalancers Options Menu"
-        echo -e -n "\n\t0 Exit\n\n\n >>\t"
+        echo -e -n "\n\t99 Back to LoadBalancers Options Menu"
+        echo -e -n "\n\t0 Exit\n\n>>>>\t"
 
 read PROTOCOLS
         case $PROTOCOLS in
@@ -1282,8 +1523,8 @@ An Error Page is the HTML file that is shown to an End User who is attempting to
 	echo -e -n "\n2\tSet a Custom Error Page"
 	echo -e -n "\n3\tDelete an Error Page"
 	echo -e -n "\n \t------"
-	echo -e -n "\n\t15 Back to LoadBalancers Options Menu"
-	echo -e -n "\n\t0 Exit\n\n\n >>\t"
+	echo -e -n "\n\t99 Back to LoadBalancers Options Menu"
+	echo -e -n "\n\t0 Exit\n\n>>>>\t"
 
 while true
 do
@@ -1318,7 +1559,7 @@ As this is very custom option, I recommend to do the following:
 		source ./lbaas.sh
                error "\t"
                 ;;
-	15|MAINMENU)
+	99|MAINMENU)
                         echo " PLEASE CHOOSE ONE OF THE FOLLOWING DATABASE INSTANCE OPTIONS: "
                         if [ "./lbaas.sh" ]; then
                         source ./lbaas.sh
