@@ -884,7 +884,7 @@ do
 
 	1|list)
 		list_lbaas;
-        	lbaas_get /loadbalancers/$LBID/nodes |tr "{[" "\n" |tr "[}" "\n" |tr "," "\n";
+        	lbaas_get /loadbalancers/$LBID/nodes |tr "{}[]," "\n" |tr ":" "\t" |tr '\"' "\0"
                         source ./lbaas.sh
                         nodes "\t"
                         ;;
@@ -895,7 +895,7 @@ do
 			echo -e -n "\n";
 			read -p "Specify a Node ID: " NODEID;
 			echo -e -n "\n\n";
-		lbaas_get /loadbalancers/$LBID/nodes/$NODEID |tr "{[" "\n" |tr "[}" "\n" |tr "," "\n";
+		lbaas_get /loadbalancers/$LBID/nodes/$NODEID |tr "{}[]," "\n" |tr ":" "\t" |tr '\"' "\0";
                         source ./lbaas.sh
                         nodes "\t"
                         ;;
@@ -1209,13 +1209,13 @@ esac
         ;;
 esac 
 
-		echo -e -n "\n\n\tNEXTGEN SERVERS	\n"
-
-		lbaas_get /servers/detail |tr "{[" "\n" |tr "[}" "\n" |tr "," "\n" |egrep "id|name|addr" |egrep -v 'rax|bandwidth';
-		echo  -e -n"\n\n\tFIRSTGEN SERVERS\n"
-		lbaas_xml /servers/detail |tr "<" "\n" |tr "/>" "\n" |egrep "name|addr";
-		read -p "Which Node you Would like to add? (Choose private IP of the Server)	" PRIVATEIP ;
-			
+		echo  -e -n "\nNextGen Servers\n"
+                curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json' https://$LOCATION.servers.api.rackspacecloud.com/v2/$ACCOUNT/servers/detail |tr "{[" "\n" |tr "[}" "\n" |tr "," "\n" |egrep "name|addr";
+                echo -e -n  "\nFirstGen Servers\n"
+                curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json' "https://$LOCATION.servers.api.rackspacecloud.com/v1.0/$ACCOUNT/servers/detail" |tr "," "\n"|egrep "name|public|private" |tr '\"' "\0" |tr "{[}]" "\t";
+		                echo -e -n "\n\n";      
+		read -p "Which Node you Would like to add? (Choose private IP of the Server)    " PRIVATEIP ;		
+		echo -e -n "\n";	
 		curl -s -XPOST -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json' -d '{"loadBalancer": { "name": "'$LBAASNAME'", "port": '$PORT', "protocol": "'$PROTOCOL'", "virtualIps": [ { "type": "'$VIRTUALIP'" } ], "nodes": [ { "address": "'$PRIVATEIP'", "port": '$PORT', "condition": "ENABLED" } ] }}' "https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers" |tr "{[" "\n" |tr "[}" "\n" |tr "," "\n" | sed -e 's/"//g' -e 's/\([^:]*\):\(.*\)/\1: \2/g' |egrep "loadBalancer|name|id|protocol|port|status";
 			source ./lbaas.sh
                         loadbalancerinfo "\t"
