@@ -363,9 +363,8 @@ do
                 case $CONFIRM in
 
         1|listentity)
-                        curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities |cut -f1 -d'{ "id"}' 
-                        #curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities |egrep -v "public[01]_v[46]|private[01]_v[46]|agent_id|created|updated|uri"
-                        #curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/xml' -H 'Accept: application/xml'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities |tr "<" "\n" |egrep -v "public[01]_v[46]|private[01]_v[46]|agent_id|created|updated|uri"
+                        #curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities |cut -f1 -d'{ "id"}' 
+                        curl -s -XGET -H "X-Auth-Token: $APITOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json'  https://monitoring.api.rackspacecloud.com/v1.0/$ACCOUNT/entities
                         source ./monitoring.sh
                         entities
                         ;;

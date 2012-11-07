@@ -9,20 +9,14 @@ while true; do
         echo "1 DATABASE INSTANCES"
 	echo "2 MONITORING"
 	echo "3 NextGen SERVERS"
-	echo "4 LOAD BALANCERS"
+	echo "4 LOAD BALANiCERS"
+	echo "5 DNS"
         echo "0 EXIT"
 
         read CONFIRM
         case $CONFIRM in
                 1|INSTANCES)
                         echo " PLEASE CHOOSE ONE OF THE FOLLOWING DATABASE INSTANCE OPTIONS: "
-        #                if [ "./databases.sh" ]; then
-        #                        source ./databases.sh
-        #                        databases
-        #                else
-        #                        echo "CHOOSE ONE OF THE AVAILABLE OPTIONS"
-        #                fi
-        #                ;;
 		if [ "$LOCATION" = "dfw" ]; then 
 echo -e -n "\n\n\t Choose your Region:
 \t1 DFW
@@ -84,12 +78,8 @@ fi
                         fi
                         ;;
 		3|NEXTGEN)
-                        if [ ".nextgen.sh" ]; then
                                 source ./nextgen.sh
                                 nextgenservers
-                        else
-                                echo "CHOOSE ONE OF THE AVAILABLE OPTIONS"
-                        fi
                         ;;
                 4|LBAAS)
 	lbaasinfo="$(curl -s -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" -H "Content-Type: application/json" -H "Accept: application/json" "https://$LOCATION.loadbalancers.api.rackspacecloud.com/v1.0/$ACCOUNT/loadbalancers" |tr "{}[]" "\n" |tr "," "\n" |egrep "name" |tr '\"' "\t")"
@@ -109,7 +99,15 @@ fi
                         fi
                         ;;
 
-
+		5|DNS)
+		if [ "$LOCATION" = "lon" ]; then
+			LOCATIION="lon."
+		else
+			LOCATION=""
+		source ./dns.sh
+			dns
+		fi
+			;;
                 0|EXIT)
                         echo "THANK YOU FOR USING THE API CLIENT"
                         exit
@@ -121,3 +119,14 @@ fi
 done
 
 }
+
+#function call_dnsapi()
+#
+#
+#{
+#
+#curl -s -i -XGET -H "X-Auth-User: $USERNAME" -H "X-Auth-Token: $APITOKEN" https://$LOCATION.dns.api.rackspacecloud.com/v1.0/${ACCOUNT}${1}
+#
+#}
+
+
