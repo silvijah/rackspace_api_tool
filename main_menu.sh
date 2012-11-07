@@ -6,7 +6,6 @@ function main_menu()
 echo -e -n "\n\nMAIN MENU : \n\n"
 
 while true; do
-#        echo "1 AUTHENTICATE"
         echo "1 DATABASE INSTANCES"
 	echo "2 MONITORING"
 	echo "3 NextGen SERVERS"
@@ -17,13 +16,64 @@ while true; do
         case $CONFIRM in
                 1|INSTANCES)
                         echo " PLEASE CHOOSE ONE OF THE FOLLOWING DATABASE INSTANCE OPTIONS: "
-                        if [ "./databases.sh" ]; then
+        #                if [ "./databases.sh" ]; then
+        #                        source ./databases.sh
+        #                        databases
+        #                else
+        #                        echo "CHOOSE ONE OF THE AVAILABLE OPTIONS"
+        #                fi
+        #                ;;
+		if [ "$LOCATION" = "dfw" ]; then 
+echo -e -n "\n\n\t Choose your Region:
+\t1 DFW
+\t2 ORD
+\t----------------
+\t0 EXIT\n>>>>\t"
+while true
+do
+		read EDITEDLOCATION
+		case $EDITEDLOCATION in
+
+		1|dfw)
+			LOCATION="dfw"
+			source ./databases.sh
+				databases
+				;;
+		2|ord)
+			LOCATION="ord"
+				source ./databases.sh
+				databases
+		esac
+done
+	elif [ "$LOCATION" = "ord" ]; then       
+echo -e -n "\n\n\t Choose your Region:
+\t1 DFW
+\t2 ORD
+\t----------------
+\t0 EXIT\n>>>>\t"
+while true
+do
+                read EDITEDLOCATION
+                case $EDITEDLOCATION in
+
+                1|dfw)
+                        LOCATION="dfw"
+                        source ./databases.sh
+                                databases
+                                ;;
+                2|ord)
+                        LOCATION="ord"
                                 source ./databases.sh
                                 databases
-                        else
-                                echo "CHOOSE ONE OF THE AVAILABLE OPTIONS"
-                        fi
-                        ;;
+                esac
+done
+
+	else
+		source ./databases.sh
+			databases
+fi
+		;;
+				
 		2|monitoring)
 			echo " PLEASE CHOOSE ONE OF THE FOLLOWING MONITORING INSTANCE OPTIONS: "
                         if [ "./monitoring.sh" ]; then
